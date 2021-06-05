@@ -145,8 +145,14 @@ var scrollVis = function () {
     });
   };
 
+  /***************************************************************************************/
+  /***************************************************************************************/
+  /***************************************************************************************/
+  /***************************************************************************************/
+  /***************************************************************************************/
 
   /**
+   * CREATE CONTENTS DATA VISUALIZATIONS
    * setupVis - creates initial elements for all
    * sections of the visualization.
    *
@@ -155,6 +161,7 @@ var scrollVis = function () {
    *  element for each filler word type.
    * @param histData - binned histogram data
    */
+
   var setupVis = function (wordData, fillerCounts, histData) {
     // axis
     g.append('g')
@@ -281,7 +288,14 @@ var scrollVis = function () {
       .attr('opacity', 0);
   };
 
+  /***************************************************************************************/
+  /***************************************************************************************/
+  /***************************************************************************************/
+  /***************************************************************************************/
+  /***************************************************************************************/
+
   /**
+   * SETUP -> INIT ALL FUNCTIONS 
    * setupSections - each section is activated
    * by a separate function. Here we associate
    * these functions to the sections based on
@@ -291,7 +305,7 @@ var scrollVis = function () {
   var setupSections = function () {
     // activateFunctions are called each
     // time the active section changes
-    activateFunctions[0] = showTitle;
+    activateFunctions[0] = empty;
     activateFunctions[1] = showFillerTitle;
     activateFunctions[2] = showGrid;
     activateFunctions[3] = highlightGrid;
@@ -313,8 +327,17 @@ var scrollVis = function () {
     updateFunctions[7] = updateCough;
   };
 
+
+  /***************************************************************************************/
+  /***************************************************************************************/
+  /***************************************************************************************/
+  /***************************************************************************************/
+  /***************************************************************************************/
+
+
+
   /**
-   * ACTIVATE FUNCTIONS
+   * DECLARE FUNCTIONS
    *
    * These will be called their
    * section is scrolled to.
@@ -327,6 +350,15 @@ var scrollVis = function () {
    * user may be scrolling up or down).
    *
    */
+
+
+  /** empty content **/
+  function empty() {
+    g.selectAll('.count-title')
+      .transition()
+      .duration(0)
+      .attr('opacity', 0);
+  }
 
   /**
    * showTitle - initial title

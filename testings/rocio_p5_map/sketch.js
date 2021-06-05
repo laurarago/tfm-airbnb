@@ -71,8 +71,8 @@ function setup() {
 
   for (var i = 0; i < data.getRowCount(); i++) { 
     // draw temperatures
-    let xpos = data.getNum(i, "V1") * 0.0003;
-    let ypos = data.getNum(i, "V2") * 0.00001;
+    let xpos = (data.getNum(i, "V1")/1000);
+    let ypos = (data.getNum(i, "V2")/1000 - 4400) / -1 + 400;
     // data.getNum(m, n) evaluates to the value in the
     // cell for row m in column n.
     // replace "TEMP" with some other column name to
