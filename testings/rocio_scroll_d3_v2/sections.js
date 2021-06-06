@@ -82,8 +82,6 @@ function createScales(){
     enrollmentSizeScale = d3.scaleLinear(d3.extent(dataset, d=> d.Total), [10,60])
     histXScale = d3.scaleLinear(d3.extent(dataset, d => d.Midpoint), [margin.left, margin.left + width])
     histYScale = d3.scaleLinear(d3.extent(dataset, d => d.HistCol), [margin.top + height, margin.top])
-
-    console.log(d.centroix);
 }
 
 function createLegend(x, y){
@@ -210,7 +208,7 @@ function drawInitial(){
 
     function mouseOver(d, i){
 
-        console.log('hi')
+        /*console.log('hi')
         d3.select(this)
             .transition('mouseover').duration(100)
             .attr('opacity', 1)
@@ -225,7 +223,7 @@ function drawInitial(){
                 <br> <strong>Median Salary:</strong> $${d3.format(",.2r")(d.Median)} 
                 <br> <strong>Category:</strong> ${d.Category}
                 <br> <strong>% Female:</strong> ${Math.round(d.ShareWomen*100)}%
-                <br> <strong># Enrolled:</strong> ${d3.format(",.2r")(d.Total)}`)
+                <br> <strong># Enrolled:</strong> ${d3.format(",.2r")(d.Total)}`)*/
     }
     
     function mouseOut(d, i){
@@ -253,7 +251,7 @@ function drawInitial(){
 
 
     //Small text label for first graph
-    svg.selectAll('.small-text')
+    /*svg.selectAll('.small-text')
         .data(dataset)
         .enter()
         .append('text')
@@ -262,7 +260,7 @@ function drawInitial(){
             .attr('x', margin.left)
             .attr('y', (d, i) => i * 5.2 + 30)
             .attr('font-size', 7)
-            .attr('text-anchor', 'end')
+            .attr('text-anchor', 'end')*/
     
     //All the required components for the small multiples charts
     //Initialises the text and rectangles, and sets opacity to 0 
@@ -402,6 +400,9 @@ function draw0(){
 
     svg.select('.first-axis')
         .attr('opacity', 1)
+
+    console.log(map_0_xScale(d.centroix))
+    console.log("hi")
     
     svg.selectAll('circle')
         .transition().duration(500).delay(100)
