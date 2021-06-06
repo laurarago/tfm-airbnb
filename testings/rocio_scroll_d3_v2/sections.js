@@ -1,7 +1,8 @@
-let dataset, svg
+let dataset, dataset2, svg
 let salarySizeScale, salaryXScale, categoryColorScale
 let simulation, nodes
 let categoryLegend, salaryLegend
+
 
 const categories = ['Engineering', 'Business', 'Physical Sciences', 'Law & Public Policy', 'Computers & Mathematics', 'Agriculture & Natural Resources',
 'Industrial Arts & Consumer Services','Arts', 'Health','Social Science', 'Biology & Life Science','Education','Humanities & Liberal Arts',
@@ -31,7 +32,8 @@ const height = 950 - margin.top - margin.bottom
 //Read Data, convert numerical categories into floats
 //Create the initial visualisation
 
-/*
+
+
 d3.csv('data/recent-grads.csv', function(d){
     return {
         Major: d.Major,
@@ -48,9 +50,10 @@ d3.csv('data/recent-grads.csv', function(d){
 }).then(data => {
     dataset = data
     console.log(dataset)
-    createScales()
-    setTimeout(drawInitial(), 100)
-}) */
+    //createScales()
+    //setTimeout(drawInitial(), 100)
+}) 
+
 
 d3.csv('data/test_tiles.csv', function(d){
     return {
@@ -59,20 +62,24 @@ d3.csv('data/test_tiles.csv', function(d){
         centroix: +d.V1,
         centroiy: +d.V2
     };
-}).then(data => {
-    dataset = data
-    console.log(dataset)
+}).then(data2 => {
+    dataset2 = data2
+    console.log(dataset2)
     createScales()
     setTimeout(drawInitial(), 100)
 })
 
+
+
+
 const colors = ['#ffcc00', '#ff6666', '#cc0066', '#66cccc', '#f688bb', '#65587f', '#baf1a1', '#333333', '#75b79e',  '#66cccc', '#9de3d0', '#f1935c', '#0c7b93', '#eab0d9', '#baf1a1', '#9399ff']
+
 
 //Create all the scales and save to global variables
 
 function createScales(){
-    map_0_xScale = d3.scaleLinear(d3.extent(dataset, d => d.centroix), [margin.left, margin.left + width+250])
-    map_0_yScale = d3.scaleLinear(d3.extent(dataset, d => d.centroiy), [margin.top + height, margin.top])
+    map_0_xScale = d3.scaleLinear(d3.extent(dataset2, d => d.centroix), [margin.left, margin.left + width+250])
+    map_0_yScale = d3.scaleLinear(d3.extent(dataset2, d => d.centroiy), [margin.top + height, margin.top])
     salarySizeScale = d3.scaleLinear(d3.extent(dataset, d => d.Median), [5, 35])
     salaryXScale = d3.scaleLinear(d3.extent(dataset, d => d.Median), [margin.left, margin.left + width+250])
     salaryYScale = d3.scaleLinear([20000, 110000], [margin.top + height, margin.top])
@@ -147,6 +154,8 @@ function drawInitial(){
     createSizeLegend()
     createSizeLegend2()
 
+    console.log("hi initial")
+
     let svg = d3.select("#vis")
                     .append('svg')
                     .attr('width', 1000)
@@ -189,15 +198,16 @@ function drawInitial(){
     simulation.stop()
 
     // Selection of all the circles 
+    // draw0 - first loading
     nodes = svg
         .selectAll('circle')
-        .data(dataset)
+        .data(dataset2)
         .enter()
         .append('circle')
-            .attr('fill', 'black')
+            .attr('fill', 'red')
             .attr('r', 3)
-            .attr('cx', (d, i) => salaryXScale(d.Median) + 5)
-            .attr('cy', (d, i) => i * 5.2 + 30)
+            .attr('cx', d => map_0_xScale(d.centroix))
+            .attr('cy', d => map_0_yScale(d.centroiy))
             .attr('opacity', 0.8)
         
     // Add mouseover and mouseout events for all circles
@@ -239,7 +249,7 @@ function drawInitial(){
 
     //Small text label for map 0
     svg.selectAll('.small-text-map-0')
-        .data(dataset)
+        .data(dataset2)
         .enter()
         .append('text')
             .text((d, i) => d.centroiy)
@@ -401,8 +411,8 @@ function draw0(){
     svg.select('.first-axis')
         .attr('opacity', 1)
 
-    console.log(map_0_xScale(d.centroix))
-    console.log("hi")
+    //console.log(map_0_xScale(d.centroix))
+    console.log("hi 0")
     
     svg.selectAll('circle')
         .transition().duration(500).delay(100)
@@ -419,6 +429,8 @@ function draw0(){
 
 
 function draw1(){
+    console.log("hi 1")
+
     //Stop simulation
     simulation.stop()
     
