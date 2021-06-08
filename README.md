@@ -45,7 +45,7 @@ General public.
 
 ## Teams
 |---|:--|:--|:--|
-| **Students &rightarrow;**  | Ànnia, Laura, Rocío, Sarah |
+| **Students &rightarrow;**  | Ànnia, Laura, Rocío, Sara |
 | **Mentors &rightarrow;**  | Apple, Carla, Karma |
 
 ## Timeline
