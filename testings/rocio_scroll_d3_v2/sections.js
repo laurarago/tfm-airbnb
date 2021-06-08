@@ -25,14 +25,17 @@ const categoriesXY = {'Engineering': [0, 400, 57382, 23.9],
                         'Communications & Journalism': [600, 800, 34500, 65.9],
                         'Interdisciplinary': [600, 200, 35000, 77.1]}
 
-const margin = {left: 170, top: 50, bottom: 50, right: 20}
-const width = 1000 - margin.left - margin.right
-const height = 950 - margin.top - margin.bottom
+const margin = {left: 140, top: 125, bottom: 35, right: 20}
+const width = 850 - margin.left - margin.right
+const height = 850 - margin.top - margin.bottom
+const paddingMap = 150;
 
-//Read Data, convert numerical categories into floats
-//Create the initial visualisation
+const colors = ['#ffcc00', '#ff6666', '#cc0066', '#66cccc', '#f688bb', '#65587f', '#baf1a1', '#333333', '#75b79e',  '#66cccc', '#9de3d0', '#f1935c', '#0c7b93', '#eab0d9', '#baf1a1', '#9399ff']
 
 
+
+
+// ************************** LOADING DATA **************************//
 
 d3.csv('data/recent-grads.csv', function(d){
     return {
@@ -55,12 +58,14 @@ d3.csv('data/recent-grads.csv', function(d){
 }) 
 
 
-d3.csv('data/test_tiles.csv', function(d){
+d3.csv('data/data_070621.csv', function(d){
     return {
-        muni: d.cap_muni,
-        codemuni: d.municipi,
-        centroix: +d.V1,
-        centroiy: +d.V2
+        muni: d.Municipality,
+        brand: d.brand,
+        codemuni: d.IdescatCode,
+        Perc_Tourist: +d.Perc_TuristicHousehols,
+        centroix: +d.X,
+        centroiy: +d.Y
     };
 }).then(data2 => {
     dataset2 = data2
@@ -69,17 +74,19 @@ d3.csv('data/test_tiles.csv', function(d){
     setTimeout(drawInitial(), 100)
 })
 
+// ************************** END LOADING DATA **************************//
 
 
 
-const colors = ['#ffcc00', '#ff6666', '#cc0066', '#66cccc', '#f688bb', '#65587f', '#baf1a1', '#333333', '#75b79e',  '#66cccc', '#9de3d0', '#f1935c', '#0c7b93', '#eab0d9', '#baf1a1', '#9399ff']
 
 
-//Create all the scales and save to global variables
+
+
+// ************************** DECLARATION VARS LEGENDS AND SCALES **************************//
 
 function createScales(){
-    map_0_xScale = d3.scaleLinear(d3.extent(dataset2, d => d.centroix), [margin.left, margin.left + width+250])
-    map_0_yScale = d3.scaleLinear(d3.extent(dataset2, d => d.centroiy), [margin.top + height, margin.top])
+    map_0_xScale = d3.scaleLinear(d3.extent(dataset2, d => d.centroix), [margin.left, width - margin.right])
+    map_0_yScale = d3.scaleLinear(d3.extent(dataset2, d => d.centroiy), [height - margin.bottom, margin.top])
     salarySizeScale = d3.scaleLinear(d3.extent(dataset, d => d.Median), [5, 35])
     salaryXScale = d3.scaleLinear(d3.extent(dataset, d => d.Median), [margin.left, margin.left + width+250])
     salaryYScale = d3.scaleLinear([20000, 110000], [margin.top + height, margin.top])
@@ -89,6 +96,7 @@ function createScales(){
     enrollmentSizeScale = d3.scaleLinear(d3.extent(dataset, d=> d.Total), [10,60])
     histXScale = d3.scaleLinear(d3.extent(dataset, d => d.Midpoint), [margin.left, margin.left + width])
     histYScale = d3.scaleLinear(d3.extent(dataset, d => d.HistCol), [margin.top + height, margin.top])
+    fillScale = d3.scaleSequentialLog(d3.interpolatePuBuGn).domain([1e-8, 1e8])
 }
 
 function createLegend(x, y){
@@ -143,7 +151,16 @@ function createSizeLegend2(){
 
     d3.select('.sizeLegend2')
         .call(sizeLegend2)
+
 }
+// **************************  END DECLARATION VARS LEGENDS AND SCALES **************************//
+
+
+
+
+
+
+// ************************** DRAW INITIAL FUNCTION **************************//
 
 // All the initial elements should be create in the drawInitial function
 // As they are required, their attributes can be modified
@@ -161,10 +178,6 @@ function drawInitial(){
                     .attr('width', 1000)
                     .attr('height', 950)
                     .attr('opacity', 1)
-
-    /*let xAxis = d3.axisBottom(salaryXScale)
-                    .ticks(4)
-                    .tickSize(height + 80)*/
     
     let xAxis = d3.axisBottom(map_0_xScale)
                     .ticks(4)
@@ -172,7 +185,10 @@ function drawInitial(){
 
     let yAxis = d3.axisLeft(map_0_yScale).tickSize([width])
 
-    let xAxisGroup = svg.append('g')
+
+    // ADDING AXIS TO SVG
+    // *******************
+    /*let xAxisGroup = svg.append('g')
         .attr('class', 'first-axis')
         .attr('transform', 'translate(0, 0)')
         .call(xAxis)
@@ -180,11 +196,13 @@ function drawInitial(){
             .remove())
         .call(g => g.selectAll('.tick line'))
             .attr('stroke-opacity', 0.2)
-            .attr('stroke-dasharray', 2.5)
+            .attr('stroke-dasharray', 2.5)*/
 
+
+    // SIMULATION FORCES
+    // *******************
     // Instantiates the force simulation
     // Has no forces. Actual forces are added and removed as required
-
     simulation = d3.forceSimulation(dataset)
 
      // Define each tick of simulation
@@ -193,23 +211,27 @@ function drawInitial(){
             .attr('cx', d => d.x)
             .attr('cy', d => d.y)
     })
-
     // Stop the simulation until later
     simulation.stop()
 
-    // Selection of all the circles 
-    // draw0 - first loading
+
+    // DRAW 0 - CATALONIA MAP - ADDING TO SVG
+    // **************************************
     nodes = svg
         .selectAll('circle')
         .data(dataset2)
         .enter()
         .append('circle')
-            .attr('fill', 'red')
+            .attr('fill', d => fillScale(d.Perc_Tourist))
             .attr('r', 3)
+            .attr('margin-left', 100)
             .attr('cx', d => map_0_xScale(d.centroix))
             .attr('cy', d => map_0_yScale(d.centroiy))
             .attr('opacity', 0.8)
-        
+
+    
+    // MOUSE EVENTS - ALL CIRCLES/SQUARES
+    // **********************************
     // Add mouseover and mouseout events for all circles
     // Changes opacity and adds border
     svg.selectAll('circle')
@@ -247,8 +269,10 @@ function drawInitial(){
     }
 
 
+    // TEXTS FOR AXIS Y - ADDING TO SVG
+    // ********************************
     //Small text label for map 0
-    svg.selectAll('.small-text-map-0')
+    /*svg.selectAll('.small-text-map-0')
         .data(dataset2)
         .enter()
         .append('text')
@@ -257,7 +281,7 @@ function drawInitial(){
             .attr('x', margin.left)
             .attr('y', (d, i) => i * 5.2 + 30)
             .attr('font-size', 7)
-            .attr('text-anchor', 'end')
+            .attr('text-anchor', 'end')*/
 
 
     //Small text label for first graph
@@ -315,7 +339,6 @@ function drawInitial(){
 
 
     // Best fit line for gender scatter plot
-
     const bestFitLine = [{x: 0, y: 56093}, {x: 1, y: 25423}]
     const lineFunction = d3.line()
                             .x(d => shareWomenXScale(d.x))
@@ -364,7 +387,15 @@ function drawInitial(){
         .call(histxAxis)
 }
 
-//Cleaning Function
+// ************************** END DRAW INITIAL FUNCTION **************************//
+
+
+
+
+
+
+// ************************** CLEAN FUNCTION **************************//
+
 //Will hide all the elements which are not necessary for a given chart type 
 
 function clean(chartType){
@@ -393,8 +424,16 @@ function clean(chartType){
     }
 }
 
-//First draw function
+// ************************** END CLEAN FUNCTION **************************//
 
+
+
+
+
+
+// ************************** ALL DRAW FUNCTIONS **************************//
+
+//First draw function
 function draw0(){
     //Stop simulation
     simulation.stop()
@@ -655,6 +694,14 @@ function draw8(){
         
 }
 
+// ************************** END ALL DRAW FUNCTIONS **************************//
+
+
+
+
+
+// ************************** LOGIC OF THE SCROLLYTELLING **************************//
+
 //Array of all the graph functions
 //Will be called from the scroller functionality
 
@@ -700,3 +747,5 @@ scroll.on('progress', function(index, progress){
 
     }
 })
+
+// ************************** END LOGIC OF THE SCROLLYTELLING **************************//
