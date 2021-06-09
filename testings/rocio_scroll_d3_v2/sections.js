@@ -2,6 +2,7 @@ let dataset, dataset2, svg
 let salarySizeScale, salaryXScale, categoryColorScale
 let simulation, nodes
 let categoryLegend, salaryLegend
+let fillScale, square
 
 
 const categories = ['Engineering', 'Business', 'Physical Sciences', 'Law & Public Policy', 'Computers & Mathematics', 'Agriculture & Natural Resources',
@@ -31,8 +32,6 @@ const height = 850 - margin.top - margin.bottom
 const paddingMap = 150;
 
 const colors = ['#ffcc00', '#ff6666', '#cc0066', '#66cccc', '#f688bb', '#65587f', '#baf1a1', '#333333', '#75b79e',  '#66cccc', '#9de3d0', '#f1935c', '#0c7b93', '#eab0d9', '#baf1a1', '#9399ff']
-
-
 
 
 // ************************** LOADING DATA **************************//
@@ -96,7 +95,9 @@ function createScales(){
     enrollmentSizeScale = d3.scaleLinear(d3.extent(dataset, d=> d.Total), [10,60])
     histXScale = d3.scaleLinear(d3.extent(dataset, d => d.Midpoint), [margin.left, margin.left + width])
     histYScale = d3.scaleLinear(d3.extent(dataset, d => d.HistCol), [margin.top + height, margin.top])
-    fillScale = d3.scaleSequentialLog(d3.interpolatePuBuGn).domain([1e-8, 1e8])
+    fillScale = d3.scaleSequential(d3.interpolatePuBu)
+    //fillScale = d3.scaleSequential(d3.interpolateGnBu)
+    //fillScale = d3.scaleLinear().domain([1,10]).range(["#ffffff", "#3da2a4"])
 }
 
 function createLegend(x, y){
@@ -217,17 +218,19 @@ function drawInitial(){
 
     // DRAW 0 - CATALONIA MAP - ADDING TO SVG
     // **************************************
+    square = d3.symbol().type(d3.symbolSquare).size(width/3);
+
     nodes = svg
         .selectAll('circle')
         .data(dataset2)
         .enter()
         .append('circle')
             .attr('fill', d => fillScale(d.Perc_Tourist))
-            .attr('r', 3)
             .attr('margin-left', 100)
+            .attr('r', 3)
             .attr('cx', d => map_0_xScale(d.centroix))
             .attr('cy', d => map_0_yScale(d.centroiy))
-            .attr('opacity', 0.8)
+            //.attr('opacity', 0.8)
 
     
     // MOUSE EVENTS - ALL CIRCLES/SQUARES
