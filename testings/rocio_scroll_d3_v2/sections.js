@@ -1,30 +1,30 @@
-let dataset, dataset2, svg
+let dataset, dataset2, svg, points, grid
 let salarySizeScale, salaryXScale, categoryColorScale
 let simulation, nodes
 let categoryLegend, salaryLegend
 let fillScale, square
 
 
-const categories = ['Engineering', 'Business', 'Physical Sciences', 'Law & Public Policy', 'Computers & Mathematics', 'Agriculture & Natural Resources',
-'Industrial Arts & Consumer Services','Arts', 'Health','Social Science', 'Biology & Life Science','Education','Humanities & Liberal Arts',
-'Psychology & Social Work','Communications & Journalism','Interdisciplinary']
+// const categories = ['Engineering', 'Business', 'Physical Sciences', 'Law & Public Policy', 'Computers & Mathematics', 'Agriculture & Natural Resources',
+// 'Industrial Arts & Consumer Services','Arts', 'Health','Social Science', 'Biology & Life Science','Education','Humanities & Liberal Arts',
+// 'Psychology & Social Work','Communications & Journalism','Interdisciplinary']
 
-const categoriesXY = {'Engineering': [0, 400, 57382, 23.9],
-                        'Business': [0, 600, 43538, 48.3],
-                        'Physical Sciences': [0, 800, 41890, 50.9],
-                        'Law & Public Policy': [0, 200, 42200, 48.3],
-                        'Computers & Mathematics': [200, 400, 42745, 31.2],
-                        'Agriculture & Natural Resources': [200, 600, 36900, 40.5],
-                        'Industrial Arts & Consumer Services': [200, 800, 36342, 35.0],
-                        'Arts': [200, 200, 33062, 60.4],
-                        'Health': [400, 400, 36825, 79.5],
-                        'Social Science': [400, 600, 37344, 55.4],
-                        'Biology & Life Science': [400, 800, 36421, 58.7],
-                        'Education': [400, 200, 32350, 74.9],
-                        'Humanities & Liberal Arts': [600, 400, 31913, 63.2],
-                        'Psychology & Social Work': [600, 600, 30100, 79.4],
-                        'Communications & Journalism': [600, 800, 34500, 65.9],
-                        'Interdisciplinary': [600, 200, 35000, 77.1]}
+// const categoriesXY = {'Engineering': [0, 400, 57382, 23.9],
+//                         'Business': [0, 600, 43538, 48.3],
+//                         'Physical Sciences': [0, 800, 41890, 50.9],
+//                         'Law & Public Policy': [0, 200, 42200, 48.3],
+//                         'Computers & Mathematics': [200, 400, 42745, 31.2],
+//                         'Agriculture & Natural Resources': [200, 600, 36900, 40.5],
+//                         'Industrial Arts & Consumer Services': [200, 800, 36342, 35.0],
+//                         'Arts': [200, 200, 33062, 60.4],
+//                         'Health': [400, 400, 36825, 79.5],
+//                         'Social Science': [400, 600, 37344, 55.4],
+//                         'Biology & Life Science': [400, 800, 36421, 58.7],
+//                         'Education': [400, 200, 32350, 74.9],
+//                         'Humanities & Liberal Arts': [600, 400, 31913, 63.2],
+//                         'Psychology & Social Work': [600, 600, 30100, 79.4],
+//                         'Communications & Journalism': [600, 800, 34500, 65.9],
+//                         'Interdisciplinary': [600, 200, 35000, 77.1]}
 
 const margin = {left: 140, top: 125, bottom: 35, right: 20}
 const width = 850 - margin.left - margin.right
@@ -33,6 +33,17 @@ const paddingMap = 150;
 
 const colors = ['#ffcc00', '#ff6666', '#cc0066', '#66cccc', '#f688bb', '#65587f', '#baf1a1', '#333333', '#75b79e',  '#66cccc', '#9de3d0', '#f1935c', '#0c7b93', '#eab0d9', '#baf1a1', '#9399ff']
 
+const brandCodes = {
+    'Pirineus': 1,
+    'Costa Barcelona': 2,
+    'Terres de Lleida': 3,
+    'Paisatges de Barcelona': 4,
+    'Costa Brava': 5,
+    'Costa Daurada': 6,
+    "Terres de l'Ebre": 7,
+    "Val d'Aran": 8,
+    'Barcelona': 9
+}
 
 // ************************** LOADING DATA **************************//
 
@@ -61,6 +72,7 @@ d3.csv('data/data_070621.csv', function(d){
     return {
         muni: d.Municipality,
         brand: d.brand,
+        brandCode: brandCodes[d.brand],
         codemuni: d.IdescatCode,
         Perc_Tourist: +d.Perc_TuristicHousehols,
         centroix: +d.X,
@@ -70,6 +82,7 @@ d3.csv('data/data_070621.csv', function(d){
     dataset2 = data2
     console.log(dataset2)
     createScales()
+    setupGrid()
     setTimeout(drawInitial(), 100)
 })
 
@@ -83,21 +96,31 @@ d3.csv('data/data_070621.csv', function(d){
 
 // ************************** DECLARATION VARS LEGENDS AND SCALES **************************//
 
+
 function createScales(){
     map_0_xScale = d3.scaleLinear(d3.extent(dataset2, d => d.centroix), [margin.left, width - margin.right])
     map_0_yScale = d3.scaleLinear(d3.extent(dataset2, d => d.centroiy), [height - margin.bottom, margin.top])
-    salarySizeScale = d3.scaleLinear(d3.extent(dataset, d => d.Median), [5, 35])
-    salaryXScale = d3.scaleLinear(d3.extent(dataset, d => d.Median), [margin.left, margin.left + width+250])
-    salaryYScale = d3.scaleLinear([20000, 110000], [margin.top + height, margin.top])
-    categoryColorScale = d3.scaleOrdinal(categories, colors)
-    shareWomenXScale = d3.scaleLinear(d3.extent(dataset, d => d.ShareWomen), [margin.left, margin.left + width])
-    enrollmentScale = d3.scaleLinear(d3.extent(dataset, d => d.Total), [margin.left + 120, margin.left + width - 50])
-    enrollmentSizeScale = d3.scaleLinear(d3.extent(dataset, d=> d.Total), [10,60])
-    histXScale = d3.scaleLinear(d3.extent(dataset, d => d.Midpoint), [margin.left, margin.left + width])
-    histYScale = d3.scaleLinear(d3.extent(dataset, d => d.HistCol), [margin.top + height, margin.top])
+    // salarySizeScale = d3.scaleLinear(d3.extent(dataset, d => d.Median), [5, 35])
+    // salaryXScale = d3.scaleLinear(d3.extent(dataset, d => d.Median), [margin.left, margin.left + width+250])
+    // salaryYScale = d3.scaleLinear([20000, 110000], [margin.top + height, margin.top])
+    // categoryColorScale = d3.scaleOrdinal(categories, colors)
+    // shareWomenXScale = d3.scaleLinear(d3.extent(dataset, d => d.ShareWomen), [margin.left, margin.left + width])
+    // enrollmentScale = d3.scaleLinear(d3.extent(dataset, d => d.Total), [margin.left + 120, margin.left + width - 50])
+    // enrollmentSizeScale = d3.scaleLinear(d3.extent(dataset, d=> d.Total), [10,60])
+    // histXScale = d3.scaleLinear(d3.extent(dataset, d => d.Midpoint), [margin.left, margin.left + width])
+    // histYScale = d3.scaleLinear(d3.extent(dataset, d => d.HistCol), [margin.top + height, margin.top])
+
+    // COLOR STUFF
+    const blue = '#20bac3';
+    const pink = '#fb248b';
+
+    const lightColor = chroma(pink).darken(2)
+    const darkColor = chroma(pink).brighten(2)
+
     fillScale = d3.scaleSequential(d3.interpolatePuBu)
     //fillScale = d3.scaleSequential(d3.interpolateGnBu)
     //fillScale = d3.scaleLinear().domain([1,10]).range(["#ffffff", "#3da2a4"])
+    // fillScale = d3.scaleSequential(chroma.scale([lightColor, darkColor]))
 }
 
 function createLegend(x, y){
@@ -116,48 +139,152 @@ function createLegend(x, y){
         .call(categoryLegend)
 }
 
-function createSizeLegend(){
-    let svg = d3.select('#legend2')
-    svg.append('g')
-        .attr('class', 'sizeLegend')
-        .attr('transform', `translate(100,50)`)
+// function createSizeLegend(){
+//     let svg = d3.select('#legend2')
+//     svg.append('g')
+//         .attr('class', 'sizeLegend')
+//         .attr('transform', `translate(100,50)`)
 
-    sizeLegend2 = d3.legendSize()
-        .scale(salarySizeScale)
-        .shape('circle')
-        .shapePadding(15)
-        .title('Salary Scale')
-        .labelFormat(d3.format("$,.2r"))
-        .cells(7)
+//     sizeLegend2 = d3.legendSize()
+//         .scale(salarySizeScale)
+//         .shape('circle')
+//         .shapePadding(15)
+//         .title('Salary Scale')
+//         .labelFormat(d3.format("$,.2r"))
+//         .cells(7)
 
-    d3.select('.sizeLegend')
-        .call(sizeLegend2)
-}
+//     d3.select('.sizeLegend')
+//         .call(sizeLegend2)
+// }
 
-function createSizeLegend2(){
-    let svg = d3.select('#legend3')
-    svg.append('g')
-        .attr('class', 'sizeLegend2')
-        .attr('transform', `translate(50,100)`)
+// function createSizeLegend2(){
+//     let svg = d3.select('#legend3')
+//     svg.append('g')
+//         .attr('class', 'sizeLegend2')
+//         .attr('transform', `translate(50,100)`)
 
-    sizeLegend2 = d3.legendSize()
-        .scale(enrollmentSizeScale)
-        .shape('circle')
-        .shapePadding(55)
-        .orient('horizontal')
-        .title('Enrolment Scale')
-        .labels(['1000', '200000', '400000'])
-        .labelOffset(30)
-        .cells(3)
+//     sizeLegend2 = d3.legendSize()
+//         .scale(enrollmentSizeScale)
+//         .shape('circle')
+//         .shapePadding(55)
+//         .orient('horizontal')
+//         .title('Enrolment Scale')
+//         .labels(['1000', '200000', '400000'])
+//         .labelOffset(30)
+//         .cells(3)
 
-    d3.select('.sizeLegend2')
-        .call(sizeLegend2)
+//     d3.select('.sizeLegend2')
+//         .call(sizeLegend2)
 
-}
+// }
 // **************************  END DECLARATION VARS LEGENDS AND SCALES **************************//
 
+// **************************  SET UP OTHER VARIABLES **************************//
 
+    // FOR 'BAR CHART'
+    function setupGrid() {    
+        const GRID_SIZE = 15; // controls how much space there is between each square
+        const GRID_COLS = 4;
 
+        let data_structure = {
+            bars : [...new Set(dataset2.map(d => d.brandCode))],
+            bar_names: [...new Set(dataset2.map(d => d.brand))],
+            bar_counts : [],
+            bar_rows : []
+        }
+        
+        for (var i = 0; i < data_structure.bars.length; i++) {
+            data_structure.bar_counts[i] = dataset2.map(d => d.brandCode).reduce(function(n, val) {
+                return n + (val === data_structure.bars[i]);
+            }, 0);
+            data_structure.bar_rows[i] = Math.ceil(data_structure.bar_counts[i] / GRID_COLS);
+        }
+        
+        const sorted = data_structure.bars.map((d,i) => { return {
+            bar: d,
+            bar_names: data_structure.bar_names[i],
+            bar_counts: data_structure.bar_counts[i],
+            bar_rows: data_structure.bar_rows[i]
+            }}).sort(function(a,b) {
+            return b.bar_counts - a.bar_counts;
+        })
+        
+        data_structure = {
+            bars: sorted.map(d => d.bar),
+            bar_names: sorted.map(d => d.bar_names),
+            bar_counts: sorted.map(d => d.bar_counts),
+            bar_rows: sorted.map(d => d.bar_rows)
+        }
+
+        console.log(data_structure)
+
+        // grid.init();
+
+        const GRID_ROWS = Math.ceil(dataset2.length / GRID_COLS);        
+            
+        grid = {
+            cells : [],
+            
+            init : function() {
+            this.cells = {};
+            
+            for (var bar = 0; bar < data_structure.bars.length; bar++) {
+                let curr_g = 
+                this.cells[bar] = [];
+                let bar_cells = [];
+                let cells_count = data_structure.bar_counts[bar];
+                        
+                let start_x = bar * (GRID_COLS+1) * GRID_SIZE;
+                    
+                for(var r = 0; r < GRID_ROWS; r++) {
+                for(var c = 0; c < GRID_COLS; c++) {
+                    if (cells_count <= 0) continue;
+
+                    var cell;
+                    cell = {
+                    x : start_x + c * GRID_SIZE,
+                    y : height - r * GRID_SIZE,
+                    occupied : false
+                    };
+                    
+                    this.cells[bar].push(cell);
+                    // bar_cells.push(cell);
+                    cells_count--;
+                };
+                };
+            }
+            
+            },
+            
+            sqdist : function(a, b) {
+            return Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2);
+            },
+
+            occupyNearest : function(p) {
+            // if (p.group != 0) return null; 
+            let bar_i = data_structure.bars.indexOf(p.brandCode);
+            var minDist = 1000000;
+            var d;
+            var candidate = null;
+            
+            for(var i = 0; i < this.cells[bar_i].length; i++) {
+                if(!this.cells[bar_i][i].occupied && ( d = this.sqdist(p, this.cells[bar_i][i])) < minDist) {
+                minDist = d;
+                candidate = this.cells[bar_i][i];
+                }
+            }
+            if(candidate)
+                candidate.occupied = true;
+            return candidate;
+            }
+        }
+
+        points = dataset2.map(d => Object.create(d));
+
+    }
+      
+
+// **************************  END SET UP OTHER VARIABLES **************************//
 
 
 
@@ -169,8 +296,8 @@ function createSizeLegend2(){
 // Each element should also have an associated class name for easy reference
 
 function drawInitial(){
-    createSizeLegend()
-    createSizeLegend2()
+    // createSizeLegend()
+    // createSizeLegend2()
 
     console.log("hi initial")
 
@@ -204,17 +331,54 @@ function drawInitial(){
     // *******************
     // Instantiates the force simulation
     // Has no forces. Actual forces are added and removed as required
-    simulation = d3.forceSimulation(dataset)
+    simulation = d3.forceSimulation(dataset2)
 
-     // Define each tick of simulation
     simulation.on('tick', () => {
+        grid.init();
+            
         nodes
-            .attr('cx', d => d.x)
-            .attr('cy', d => d.y)
-    })
-    // Stop the simulation until later
-    simulation.stop()
+            .each(function(d) { 
+                let gridpoint = grid.occupyNearest(d);
+                if (gridpoint) {            
+                    // ensures smooth movement towards final positoin
+                                d.x += (gridpoint.x - d.x) * .05;
+                                d.y += (gridpoint.y - d.y) * .05;
+                
+                    // jumps directly into final position  
+                    // d.x = gridpoint.x;
+                    // d.y = gridpoint.y
+                            }
+                })
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y)
+        });
 
+    drag = simulation => {
+
+        function dragstarted(d) {
+            if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+        
+        function dragged(d) {
+            d.fx = d3.event.x;
+            d.fy = d3.event.y;
+        }
+        
+        function dragended(d) {
+            if (!d3.event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+        
+        return d3.drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended);
+    }
+
+    simulation.stop()
 
     // DRAW 0 - CATALONIA MAP - ADDING TO SVG
     // **************************************
@@ -223,14 +387,19 @@ function drawInitial(){
     nodes = svg
         .selectAll('circle')
         .data(dataset2)
-        .enter()
-        .append('circle')
+        .join('circle')
             .attr('fill', d => fillScale(d.Perc_Tourist))
             .attr('margin-left', 100)
             .attr('r', 3)
             .attr('cx', d => map_0_xScale(d.centroix))
             .attr('cy', d => map_0_yScale(d.centroiy))
             //.attr('opacity', 0.8)
+    
+
+    //here
+    
+    
+    
 
     
     // MOUSE EVENTS - ALL CIRCLES/SQUARES
@@ -272,6 +441,8 @@ function drawInitial(){
     }
 
 
+
+
     // TEXTS FOR AXIS Y - ADDING TO SVG
     // ********************************
     //Small text label for map 0
@@ -301,93 +472,93 @@ function drawInitial(){
     
     //All the required components for the small multiples charts
     //Initialises the text and rectangles, and sets opacity to 0 
-    svg.selectAll('.cat-rect')
-        .data(categories).enter()
-        .append('rect')
-            .attr('class', 'cat-rect')
-            .attr('x', d => categoriesXY[d][0] + 120 + 1000)
-            .attr('y', d => categoriesXY[d][1] + 30)
-            .attr('width', 160)
-            .attr('height', 30)
-            .attr('opacity', 0)
-            .attr('fill', 'grey')
+    // svg.selectAll('.cat-rect')
+    //     .data(categories).enter()
+    //     .append('rect')
+    //         .attr('class', 'cat-rect')
+    //         .attr('x', d => categoriesXY[d][0] + 120 + 1000)
+    //         .attr('y', d => categoriesXY[d][1] + 30)
+    //         .attr('width', 160)
+    //         .attr('height', 30)
+    //         .attr('opacity', 0)
+    //         .attr('fill', 'grey')
 
 
-    svg.selectAll('.lab-text')
-        .data(categories).enter()
-        .append('text')
-        .attr('class', 'lab-text')
-        .attr('opacity', 0)
-        .raise()
+    // svg.selectAll('.lab-text')
+    //     .data(categories).enter()
+    //     .append('text')
+    //     .attr('class', 'lab-text')
+    //     .attr('opacity', 0)
+    //     .raise()
 
-    svg.selectAll('.lab-text')
-        .text(d => `Average: $${d3.format(",.2r")(categoriesXY[d][2])}`)
-        .attr('x', d => categoriesXY[d][0] + 200 + 1000)
-        .attr('y', d => categoriesXY[d][1] - 500)
-        .attr('font-family', 'Domine')
-        .attr('font-size', '12px')
-        .attr('font-weight', 700)
-        .attr('fill', 'black')
-        .attr('text-anchor', 'middle')       
+    // svg.selectAll('.lab-text')
+    //     .text(d => `Average: $${d3.format(",.2r")(categoriesXY[d][2])}`)
+    //     .attr('x', d => categoriesXY[d][0] + 200 + 1000)
+    //     .attr('y', d => categoriesXY[d][1] - 500)
+    //     .attr('font-family', 'Domine')
+    //     .attr('font-size', '12px')
+    //     .attr('font-weight', 700)
+    //     .attr('fill', 'black')
+    //     .attr('text-anchor', 'middle')       
 
-    svg.selectAll('.lab-text')
-            .on('mouseover', function(d, i){
-                d3.select(this)
-                    .text(d)
-            })
-            .on('mouseout', function(d, i){
-                d3.select(this)
-                    .text(d => `Average: $${d3.format(",.2r")(categoriesXY[d][2])}`)
-            })
+    // svg.selectAll('.lab-text')
+    //         .on('mouseover', function(d, i){
+    //             d3.select(this)
+    //                 .text(d)
+    //         })
+    //         .on('mouseout', function(d, i){
+    //             d3.select(this)
+    //                 .text(d => `Average: $${d3.format(",.2r")(categoriesXY[d][2])}`)
+    //         })
 
 
     // Best fit line for gender scatter plot
-    const bestFitLine = [{x: 0, y: 56093}, {x: 1, y: 25423}]
-    const lineFunction = d3.line()
-                            .x(d => shareWomenXScale(d.x))
-                            .y(d => salaryYScale(d.y))
+    // const bestFitLine = [{x: 0, y: 56093}, {x: 1, y: 25423}]
+    // const lineFunction = d3.line()
+    //                         .x(d => shareWomenXScale(d.x))
+    //                         .y(d => salaryYScale(d.y))
 
-    // Axes for Scatter Plot
-    svg.append('path')
-        .transition('best-fit-line').duration(430)
-            .attr('class', 'best-fit')
-            .attr('d', lineFunction(bestFitLine))
-            .attr('stroke', 'grey')
-            .attr('stroke-dasharray', 6.2)
-            .attr('opacity', 0)
-            .attr('stroke-width', 3)
+    // // Axes for Scatter Plot
+    // svg.append('path')
+    //     .transition('best-fit-line').duration(430)
+    //         .attr('class', 'best-fit')
+    //         .attr('d', lineFunction(bestFitLine))
+    //         .attr('stroke', 'grey')
+    //         .attr('stroke-dasharray', 6.2)
+    //         .attr('opacity', 0)
+    //         .attr('stroke-width', 3)
 
-    let scatterxAxis = d3.axisBottom(shareWomenXScale)
-    let scatteryAxis = d3.axisLeft(salaryYScale).tickSize([width])
+    // let scatterxAxis = d3.axisBottom(shareWomenXScale)
+    // let scatteryAxis = d3.axisLeft(salaryYScale).tickSize([width])
 
-    svg.append('g')
-        .call(scatterxAxis)
-        .attr('class', 'scatter-x')
-        .attr('opacity', 0)
-        .attr('transform', `translate(0, ${height + margin.top})`)
-        .call(g => g.select('.domain')
-            .remove())
+    // svg.append('g')
+    //     .call(scatterxAxis)
+    //     .attr('class', 'scatter-x')
+    //     .attr('opacity', 0)
+    //     .attr('transform', `translate(0, ${height + margin.top})`)
+    //     .call(g => g.select('.domain')
+    //         .remove())
     
-    svg.append('g')
-        .call(scatteryAxis)
-        .attr('class', 'scatter-y')
-        .attr('opacity', 0)
-        .attr('transform', `translate(${margin.left - 20 + width}, 0)`)
-        .call(g => g.select('.domain')
-            .remove())
-        .call(g => g.selectAll('.tick line'))
-            .attr('stroke-opacity', 0.2)
-            .attr('stroke-dasharray', 2.5)
+    // svg.append('g')
+    //     .call(scatteryAxis)
+    //     .attr('class', 'scatter-y')
+    //     .attr('opacity', 0)
+    //     .attr('transform', `translate(${margin.left - 20 + width}, 0)`)
+    //     .call(g => g.select('.domain')
+    //         .remove())
+    //     .call(g => g.selectAll('.tick line'))
+    //         .attr('stroke-opacity', 0.2)
+    //         .attr('stroke-dasharray', 2.5)
 
     // Axes for Histogram 
 
-    let histxAxis = d3.axisBottom(enrollmentScale)
+    // let histxAxis = d3.axisBottom(enrollmentScale)
 
-    svg.append('g')
-        .attr('class', 'enrolment-axis')
-        .attr('transform', 'translate(0, 700)')
-        .attr('opacity', 0)
-        .call(histxAxis)
+    // svg.append('g')
+    //     .attr('class', 'enrolment-axis')
+    //     .attr('transform', 'translate(0, 700)')
+    //     .attr('opacity', 0)
+    //     .call(histxAxis)
 }
 
 // ************************** END DRAW INITIAL FUNCTION **************************//
@@ -430,10 +601,6 @@ function clean(chartType){
 // ************************** END CLEAN FUNCTION **************************//
 
 
-
-
-
-
 // ************************** ALL DRAW FUNCTIONS **************************//
 
 //First draw function
@@ -473,229 +640,217 @@ function draw0(){
 function draw1(){
     console.log("hi 1")
 
-    //Stop simulation
-    simulation.stop()
-    
-    let svg = d3.select("#vis")
-                    .select('svg')
-                    .attr('width', 1000)
-                    .attr('height', 950)
-    
-    clean('isFirst')
-
-    d3.select('.categoryLegend').transition().remove()
-
-    svg.select('.first-axis')
-        .attr('opacity', 1)
-    
-    svg.selectAll('circle')
-        .transition().duration(500).delay(100)
-        .attr('fill', 'black')
-        .attr('r', 3)
-        .attr('cx', (d, i) => salaryXScale(d.Median)+5)
-        .attr('cy', (d, i) => i * 5.2 + 30)
-
-    svg.selectAll('.small-text').transition()
-        .attr('opacity', 1)
-        .attr('x', margin.left)
-        .attr('y', (d, i) => i * 5.2 + 30)
-}
-
-
-function draw2(){
     let svg = d3.select("#vis").select('svg')
-    
+
     clean('none')
 
-    svg.selectAll('circle')
-        .transition().duration(300).delay((d, i) => i * 5)
-        .attr('r', d => salarySizeScale(d.Median) * 1.2)
-        .attr('fill', d => categoryColorScale(d.Category))
-
-    simulation  
-        .force('charge', d3.forceManyBody().strength([2]))
-        .force('forceX', d3.forceX(d => categoriesXY[d.Category][0] + 200))
-        .force('forceY', d3.forceY(d => categoriesXY[d.Category][1] - 50))
-        .force('collide', d3.forceCollide(d => salarySizeScale(d.Median) + 4))
-        .alphaDecay([0.02])
-
-    //Reheat simulation and restart
-    simulation.alpha(0.9).restart()
-    
-    createLegend(20, 50)
-}
-
-function draw3(){
-    let svg = d3.select("#vis").select('svg')
-    clean('isMultiples')
-    
-    svg.selectAll('circle')
-        .transition().duration(400).delay((d, i) => i * 5)
-        .attr('r', d => salarySizeScale(d.Median) * 1.2)
-        .attr('fill', d => categoryColorScale(d.Category))
-
-    svg.selectAll('.cat-rect').transition().duration(300).delay((d, i) => i * 30)
-        .attr('opacity', 0.2)
-        .attr('x', d => categoriesXY[d][0] + 120)
-        
-    svg.selectAll('.lab-text').transition().duration(300).delay((d, i) => i * 30)
-        .text(d => `Average: $${d3.format(",.2r")(categoriesXY[d][2])}`)
-        .attr('x', d => categoriesXY[d][0] + 200)   
-        .attr('y', d => categoriesXY[d][1] + 50)
-        .attr('opacity', 1)
-
-    svg.selectAll('.lab-text')
-        .on('mouseover', function(d, i){
-            d3.select(this)
-                .text(d)
-        })
-        .on('mouseout', function(d, i){
-            d3.select(this)
-                .text(d => `Average: $${d3.format(",.2r")(categoriesXY[d][2])}`)
-        })
-
-    simulation  
-        .force('charge', d3.forceManyBody().strength([2]))
-        .force('forceX', d3.forceX(d => categoriesXY[d.Category][0] + 200))
-        .force('forceY', d3.forceY(d => categoriesXY[d.Category][1] - 50))
-        .force('collide', d3.forceCollide(d => salarySizeScale(d.Median) + 4))
-        .alpha(0.7).alphaDecay(0.02).restart()
-
-}
-
-function draw5(){
-    
-    let svg = d3.select('#vis').select('svg')
-    clean('isMultiples')
-
     simulation
-        .force('forceX', d3.forceX(d => categoriesXY[d.Category][0] + 200))
-        .force('forceY', d3.forceY(d => categoriesXY[d.Category][1] - 50))
-        .force('collide', d3.forceCollide(d => salarySizeScale(d.Median) + 4))
-
+        .force("center", d3.forceCenter(width / 2, height / 1.5))
+    
     simulation.alpha(1).restart()
-   
-    svg.selectAll('.lab-text').transition().duration(300).delay((d, i) => i * 30)
-        .text(d => `% Female: ${(categoriesXY[d][3])}%`)
-        .attr('x', d => categoriesXY[d][0] + 200)   
-        .attr('y', d => categoriesXY[d][1] + 50)
-        .attr('opacity', 1)
-    
-    svg.selectAll('.lab-text')
-        .on('mouseover', function(d, i){
-            d3.select(this)
-                .text(d)
-        })
-        .on('mouseout', function(d, i){
-            d3.select(this)
-                .text(d => `% Female: ${(categoriesXY[d][3])}%`)
-        })
-   
-    svg.selectAll('.cat-rect').transition().duration(300).delay((d, i) => i * 30)
-        .attr('opacity', 0.2)
-        .attr('x', d => categoriesXY[d][0] + 120)
 
     svg.selectAll('circle')
-        .transition().duration(400).delay((d, i) => i * 4)
-            .attr('fill', colorByGender)
-            .attr('r', d => salarySizeScale(d.Median))
+        .attr('fill', d => fillScale(d.Perc_Tourist))
+        .transition().duration(300).delay((d, i) => i * 2)
+        .call(drag(simulation))
 
 }
 
-function colorByGender(d, i){
-    if (d.ShareWomen < 0.4){
-        return 'blue'
-    } else if (d.ShareWomen > 0.6) {
-        return 'red'
-    } else {
-        return 'grey'
-    }
-}
 
-function draw6(){
-    simulation.stop()
+// function draw2(){
+//     let svg = d3.select("#vis").select('svg')
     
-    let svg = d3.select("#vis").select("svg")
-    clean('isScatter')
+//     clean('none')
 
-    svg.selectAll('.scatter-x').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
-    svg.selectAll('.scatter-y').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
+//     svg.selectAll('circle')
+//         .transition().duration(300).delay((d, i) => i * 5)
+//         .attr('r', d => salarySizeScale(d.Median) * 1.2)
+//         .attr('fill', d => categoryColorScale(d.Category))
 
-    svg.selectAll('circle')
-        .transition().duration(800).ease(d3.easeBack)
-        .attr('cx', d => shareWomenXScale(d.ShareWomen))
+//     simulation  
+//         .force('charge', d3.forceManyBody().strength([2]))
+//         .force('forceX', d3.forceX(d => categoriesXY[d.Category][0] + 200))
+//         .force('forceY', d3.forceY(d => categoriesXY[d.Category][1] - 50))
+//         .force('collide', d3.forceCollide(d => salarySizeScale(d.Median) + 4))
+//         .alphaDecay([0.02])
+
+//     //Reheat simulation and restart
+//     simulation.alpha(0.9).restart()
+    
+//     createLegend(20, 50)
+// }
+
+// function draw3(){
+//     let svg = d3.select("#vis").select('svg')
+//     clean('isMultiples')
+    
+//     svg.selectAll('circle')
+//         .transition().duration(400).delay((d, i) => i * 5)
+//         .attr('r', d => salarySizeScale(d.Median) * 1.2)
+//         .attr('fill', d => categoryColorScale(d.Category))
+
+//     svg.selectAll('.cat-rect').transition().duration(300).delay((d, i) => i * 30)
+//         .attr('opacity', 0.2)
+//         .attr('x', d => categoriesXY[d][0] + 120)
+        
+//     svg.selectAll('.lab-text').transition().duration(300).delay((d, i) => i * 30)
+//         .text(d => `Average: $${d3.format(",.2r")(categoriesXY[d][2])}`)
+//         .attr('x', d => categoriesXY[d][0] + 200)   
+//         .attr('y', d => categoriesXY[d][1] + 50)
+//         .attr('opacity', 1)
+
+//     svg.selectAll('.lab-text')
+//         .on('mouseover', function(d, i){
+//             d3.select(this)
+//                 .text(d)
+//         })
+//         .on('mouseout', function(d, i){
+//             d3.select(this)
+//                 .text(d => `Average: $${d3.format(",.2r")(categoriesXY[d][2])}`)
+//         })
+
+//     simulation  
+//         .force('charge', d3.forceManyBody().strength([2]))
+//         .force('forceX', d3.forceX(d => categoriesXY[d.Category][0] + 200))
+//         .force('forceY', d3.forceY(d => categoriesXY[d.Category][1] - 50))
+//         .force('collide', d3.forceCollide(d => salarySizeScale(d.Median) + 4))
+//         .alpha(0.7).alphaDecay(0.02).restart()
+
+// }
+
+// function draw5(){
+    
+//     let svg = d3.select('#vis').select('svg')
+//     clean('isMultiples')
+
+//     simulation
+//         .force('forceX', d3.forceX(d => categoriesXY[d.Category][0] + 200))
+//         .force('forceY', d3.forceY(d => categoriesXY[d.Category][1] - 50))
+//         .force('collide', d3.forceCollide(d => salarySizeScale(d.Median) + 4))
+
+//     simulation.alpha(1).restart()
+   
+//     svg.selectAll('.lab-text').transition().duration(300).delay((d, i) => i * 30)
+//         .text(d => `% Female: ${(categoriesXY[d][3])}%`)
+//         .attr('x', d => categoriesXY[d][0] + 200)   
+//         .attr('y', d => categoriesXY[d][1] + 50)
+//         .attr('opacity', 1)
+    
+//     svg.selectAll('.lab-text')
+//         .on('mouseover', function(d, i){
+//             d3.select(this)
+//                 .text(d)
+//         })
+//         .on('mouseout', function(d, i){
+//             d3.select(this)
+//                 .text(d => `% Female: ${(categoriesXY[d][3])}%`)
+//         })
+   
+//     svg.selectAll('.cat-rect').transition().duration(300).delay((d, i) => i * 30)
+//         .attr('opacity', 0.2)
+//         .attr('x', d => categoriesXY[d][0] + 120)
+
+//     svg.selectAll('circle')
+//         .transition().duration(400).delay((d, i) => i * 4)
+//             .attr('fill', colorByGender)
+//             .attr('r', d => salarySizeScale(d.Median))
+
+// }
+
+// function colorByGender(d, i){
+//     if (d.ShareWomen < 0.4){
+//         return 'blue'
+//     } else if (d.ShareWomen > 0.6) {
+//         return 'red'
+//     } else {
+//         return 'grey'
+//     }
+// }
+
+// function draw6(){
+//     simulation.stop()
+    
+//     let svg = d3.select("#vis").select("svg")
+//     clean('isScatter')
+
+//     svg.selectAll('.scatter-x').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
+//     svg.selectAll('.scatter-y').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
+
+//     svg.selectAll('circle')
+//         .transition().duration(800).ease(d3.easeBack)
+//         .attr('cx', d => shareWomenXScale(d.ShareWomen))
         
     
-    svg.selectAll('circle').transition(1600)
-        .attr('fill', colorByGender)
-        .attr('r', 10)
+//     svg.selectAll('circle').transition(1600)
+//         .attr('fill', colorByGender)
+//         .attr('r', 10)
 
-    svg.select('.best-fit').transition().duration(300)
-        .attr('opacity', 0.5)
+//     svg.select('.best-fit').transition().duration(300)
+//         .attr('opacity', 0.5)
    
-}
+// }
 
-function draw7(){
-    let svg = d3.select('#vis').select('svg')
+// function draw7(){
+//     let svg = d3.select('#vis').select('svg')
 
-    clean('isBubble')
+//     clean('isBubble')
 
-    simulation
-        .force('forceX', d3.forceX(d => enrollmentScale(d.Total)))
-        .force('forceY', d3.forceY(500))
-        .force('collide', d3.forceCollide(d => enrollmentSizeScale(d.Total) + 2))
-        .alpha(0.8).alphaDecay(0.05).restart()
+//     simulation
+//         .force('forceX', d3.forceX(d => enrollmentScale(d.Total)))
+//         .force('forceY', d3.forceY(500))
+//         .force('collide', d3.forceCollide(d => enrollmentSizeScale(d.Total) + 2))
+//         .alpha(0.8).alphaDecay(0.05).restart()
 
-    svg.selectAll('circle')
-        .transition().duration(300).delay((d, i) => i * 4)
-        .attr('r', d => enrollmentSizeScale(d.Total))
-        .attr('fill', d => categoryColorScale(d.Category))
+//     svg.selectAll('circle')
+//         .transition().duration(300).delay((d, i) => i * 4)
+//         .attr('r', d => enrollmentSizeScale(d.Total))
+//         .attr('fill', d => categoryColorScale(d.Category))
 
-    //Show enrolment axis (remember to include domain)
-    svg.select('.enrolment-axis').attr('opacity', 0.5).selectAll('.domain').attr('opacity', 1)
+//     //Show enrolment axis (remember to include domain)
+//     svg.select('.enrolment-axis').attr('opacity', 0.5).selectAll('.domain').attr('opacity', 1)
 
-}
+// }
 
-function draw4(){
-    let svg = d3.select('#vis').select('svg')
+// function draw4(){
+//     let svg = d3.select('#vis').select('svg')
 
-    clean('isHist')
+//     clean('isHist')
 
-    simulation.stop()
+//     simulation.stop()
 
-    svg.selectAll('circle')
-        .transition().duration(600).delay((d, i) => i * 2).ease(d3.easeBack)
-            .attr('r', 10)
-            .attr('cx', d => histXScale(d.Midpoint))
-            .attr('cy', d => histYScale(d.HistCol))
-            .attr('fill', d => categoryColorScale(d.Category))
+//     svg.selectAll('circle')
+//         .transition().duration(600).delay((d, i) => i * 2).ease(d3.easeBack)
+//             .attr('r', 10)
+//             .attr('cx', d => histXScale(d.Midpoint))
+//             .attr('cy', d => histYScale(d.HistCol))
+//             .attr('fill', d => categoryColorScale(d.Category))
 
-    let xAxis = d3.axisBottom(histXScale)
-    svg.append('g')
-        .attr('class', 'hist-axis')
-        .attr('transform', `translate(0, ${height + margin.top + 10})`)
-        .call(xAxis)
+//     let xAxis = d3.axisBottom(histXScale)
+//     svg.append('g')
+//         .attr('class', 'hist-axis')
+//         .attr('transform', `translate(0, ${height + margin.top + 10})`)
+//         .call(xAxis)
 
-    svg.selectAll('.lab-text')
-        .on('mouseout', )
-}
+//     svg.selectAll('.lab-text')
+//         .on('mouseout', )
+// }
 
-function draw8(){
-    clean('none')
+// function draw8(){
+//     clean('none')
 
-    let svg = d3.select('#vis').select('svg')
-    svg.selectAll('circle')
-        .transition()
-        .attr('r', d => salarySizeScale(d.Median) * 1.6)
-        .attr('fill', d => categoryColorScale(d.Category))
+//     let svg = d3.select('#vis').select('svg')
+//     svg.selectAll('circle')
+//         .transition()
+//         .attr('r', d => salarySizeScale(d.Median) * 1.6)
+//         .attr('fill', d => categoryColorScale(d.Category))
 
-    simulation 
-        .force('forceX', d3.forceX(500))
-        .force('forceY', d3.forceY(500))
-        .force('collide', d3.forceCollide(d => salarySizeScale(d.Median) * 1.6 + 4))
-        .alpha(0.6).alphaDecay(0.05).restart()
+//     simulation 
+//         .force('forceX', d3.forceX(500))
+//         .force('forceY', d3.forceY(500))
+//         .force('collide', d3.forceCollide(d => salarySizeScale(d.Median) * 1.6 + 4))
+//         .alpha(0.6).alphaDecay(0.05).restart()
         
-}
+// }
 
 // ************************** END ALL DRAW FUNCTIONS **************************//
 
@@ -710,14 +865,14 @@ function draw8(){
 
 let activationFunctions = [
     draw0,
-    draw1,
-    draw2,
-    draw3,
-    draw4,
-    draw5, 
-    draw6, 
-    draw7,
-    draw8
+    draw1
+    // draw2,
+    // draw3,
+    // draw4,
+    // draw5, 
+    // draw6, 
+    // draw7,
+    // draw8
 ]
 
 //All the scrolling function
