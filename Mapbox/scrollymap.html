@@ -237,7 +237,7 @@ map.on("load", function() {
 
     map.addSource("airbnb", {
     type: 'vector',
-    url: 'mapbox://laurarago.1dqgqij3',
+    url: 'mapbox://laurarago.6y9i4zvu',
 });
 
 var hoveredStateId =  null;
@@ -247,23 +247,45 @@ map.addLayer({
 'id': 'airbnb-fill',
 'type': 'circle',
 'source': 'airbnb',
-'source-layer': 'airbnb',
+'source-layer': 'AirbnbBo',
 'paint': {
 // make circles larger as the user zooms from z12 to z22
 'circle-radius': {
     'base': 1.75,
     'stops': [
-        [9, 1.5],
-        [12, 5]
+        [9, 2],
+        [10, 4],
+        [15, 7]
     ]
     },
-// color circles by ethnicity, using a match expression
-// https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-match
 'circle-color': '#223b53',
 'circle-opacity': 0.7,
 'circle-stroke-color': ["case", ["boolean", ["feature-state", "hover"], false], "black", "white"],
 'circle-stroke-width': ["case", ["boolean", ["feature-state", "hover"], false], 2, 0]}
+});
 
+map.addLayer({
+'id': 'airbnb-brand',
+'type': 'circle',
+'source': 'airbnb',
+'source-layer': 'AirbnbBo',
+'paint': {
+// make circles larger as the user zooms from z12 to z22
+'circle-radius': {
+    'base': 1.75,
+    'stops': [
+        [9, 2],
+        [10, 4],
+        [15, 7]
+
+    ]
+    },
+'circle-color': ["match", ["get","RealData_brand"],
+        "Costa Brava", "#FFD100",
+        "#223b53"],
+'circle-opacity': 0,
+'circle-stroke-color': ["case", ["boolean", ["feature-state", "hover"], false], "black", "white"],
+'circle-stroke-width': ["case", ["boolean", ["feature-state", "hover"], false], 2, 0]}
 });
 
 
@@ -272,7 +294,6 @@ var popup = new mapboxgl.Popup({
     closeOnClick: false,
 }); 
 
-//Hover Renta sc i mun
 map.on('mousemove', 'airbnb-fill', function(e) {
     if (e.features.length > 0) {
           if (hoveredStateId) {          
