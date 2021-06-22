@@ -237,7 +237,7 @@ map.on("load", function() {
 
     map.addSource("airbnb", {
     type: 'vector',
-    url: 'mapbox://laurarago.6y9i4zvu',
+    url: 'mapbox://laurarago.2plwqw2z',
 });
 
 var hoveredStateId =  null;
@@ -247,7 +247,7 @@ map.addLayer({
 'id': 'airbnb-fill',
 'type': 'circle',
 'source': 'airbnb',
-'source-layer': 'AirbnbBo',
+'source-layer': 'AirbnbData',
 'paint': {
 // make circles larger as the user zooms from z12 to z22
 'circle-radius': {
@@ -258,17 +258,17 @@ map.addLayer({
         [15, 7]
     ]
     },
-'circle-color': '#223b53',
+'circle-color': '#29DDC7',
 'circle-opacity': 0.7,
-'circle-stroke-color': ["case", ["boolean", ["feature-state", "hover"], false], "black", "white"],
+'circle-stroke-color': '#29DDC7',
 'circle-stroke-width': ["case", ["boolean", ["feature-state", "hover"], false], 2, 0]}
-});
+}, "settlement-subdivision-label");
 
 map.addLayer({
 'id': 'airbnb-brand',
 'type': 'circle',
 'source': 'airbnb',
-'source-layer': 'AirbnbBo',
+'source-layer': 'AirbnbData',
 'paint': {
 // make circles larger as the user zooms from z12 to z22
 'circle-radius': {
@@ -282,11 +282,11 @@ map.addLayer({
     },
 'circle-color': ["match", ["get","RealData_brand"],
         "Costa Brava", "#FFD100",
-        "#223b53"],
+        "#29DDC7"],
 'circle-opacity': 0,
 'circle-stroke-color': ["case", ["boolean", ["feature-state", "hover"], false], "black", "white"],
 'circle-stroke-width': ["case", ["boolean", ["feature-state", "hover"], false], 2, 0]}
-});
+}, "settlement-subdivision-label");
 
 
 var popup = new mapboxgl.Popup({

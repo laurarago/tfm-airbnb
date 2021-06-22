@@ -182,6 +182,50 @@ bearing: -46.40
       opacity: 0,
 
  }]
+  },
+  {
+    id: 'Lleida',
+    title: 'But Barcelona is the worst',
+    image: './path/to/image/source.png',
+    description: 'Copy these sections to add to your story.',
+    location: {
+      center: { lon: 0.80473, lat: 41.84571 },
+zoom: 9.26,
+pitch: 56.00,
+bearing: -14.35
+    },
+    onChapterEnter: [ {
+      layer: 'airbnb-fill',
+      opacity: 0.7,
+
+ }],
+    onChapterExit: [{
+      layer: 'airbnb-fill',
+      opacity: 0,
+
+ }]
+  },
+  {
+    id: 'Alamús',
+    title: 'But Barcelona is the worst',
+    image: './path/to/image/source.png',
+    description: 'Copy these sections to add to your story.',
+    location: {
+      center: { lon: 0.73569, lat: 41.63954 },
+zoom: 12.55,
+pitch: 56.00,
+bearing: 0.00
+    },
+    onChapterEnter: [ {
+      layer: 'airbnb-fill',
+      opacity: 0.7,
+
+ }],
+    onChapterExit: [{
+      layer: 'airbnb-fill',
+      opacity: 0,
+
+ }]
   }
   ]
 };
