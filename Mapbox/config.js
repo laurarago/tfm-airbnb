@@ -10,9 +10,10 @@ var config = {
   chapters: [
     {
       id: 'Start',
-      title: '1. General Overview',
-      image: './path/to/image/source.png',
-      description: 'Description text goes here.',
+      title: 'A journey through Catalonia conquered by Airbnb',
+      image: '',
+      description: 'The Airbnb tourist rental platform offers up to <span style="background-color: #29DDC7">73,800 apartments</span> throughout the Catalan territory. Swipe down to see how they are distributed and learn more about the tourist stress suffered by some of the towns'
+    ,
       location: {
         center: { lon: 1.35692, lat: 42.13644 },
         zoom: 6.98,
@@ -32,8 +33,8 @@ var config = {
     {
       id: 'CostaBrava',
       title: 'Costa Brava gathers the most densest area of Airbnb',
-      image: './path/to/image/source.png',
-      description: 'Copy these sections to add to your story.',
+      image: '',
+      description: '<span style="background-color: #FFD208"><b>Costa Brava</b> is the tourist brand</span> that concentrates a greater number of these advertisements. 98% of the municipalities have at least one apartment. And nine of the 10 locations with the highest percentage of Airbnb are in this area.',
       location: {
         center: { lon: 2.97687, lat: 42.02785 },
         zoom: 9.53,
@@ -53,47 +54,84 @@ var config = {
     },
     {
       id: 'Roses',
-      title: 'Roses is the one more airbnbs of all Catalonia',
-      image: './path/to/image/source.png',
-      description: 'Explain about santa margarida',
+      title: `Roses: the Airbnb paradise in L'Empordà`,
+      image: '',
+      description: 'Of all of them, Roses is the one with the largest number of Airbnb apartments. Most are concentrated in the old town and in the Santa Margarida urbanization and near the Almadrava beach.',
       location: {
-        center: { lon: 3.17580, lat: 42.27173 },
-        zoom: 13.05,
-        pitch: 59.50,
+        center: { lon: 3.18551, lat: 42.28491 },
+        zoom: 12.05,
+        pitch: 60.00,
         bearing: 24.00
       },
       onChapterEnter: [ {
         layer: 'airbnb-brand',
         opacity: 0.7,
 
-   }],
+      },{
+        layer: 'Roses',
+        opacity: 0.5,
+      }],
       onChapterExit: [{
         layer: 'airbnb-brand',
+        opacity: 0
+      },,{
+        layer: 'Roses',
         opacity: 0,
-
-   }]
+      }]
     },
     {
-      id: 'Begur',
-      title: 'But Begur is the one with a higher percentage of airbnb of the total number of houses',
-      image: './path/to/image/source.png',
-      description: 'Copy these sections to add to your story.',
+      id: 'Roses',
+      title: '',
+      image: 'https://imagenes.cosasdebarcos.com/amarres/8/1/8/2/amarre-venta-65711060180969535353505449484569x.jpg',
+      description: 'While Santa Margarida (picture above) is known for its tall towers of tourist apartments, the Canyelles and Almadrava area are characterized by houses with swimming pools and summer chalets.'
+      ,
       location: {
-        center: { lon: 3.20163, lat: 41.95066 },
-zoom: 12.40,
-pitch: 18.50,
-bearing: -112.80
+        center: { lon: 3.18551, lat: 42.28491 },
+        zoom: 12.05,
+        pitch: 60.00,
+        bearing: 24.00
       },
       onChapterEnter: [ {
         layer: 'airbnb-brand',
         opacity: 0.7,
 
-   }],
+      },{
+        layer: 'Roses',
+        opacity: 0.5,
+      }],
+      onChapterExit: [{
+        layer: 'airbnb-brand',
+        opacity: 0
+      },,{
+        layer: 'Roses',
+        opacity: 0,
+      }]
+    },
+    {
+      id: 'Begur',
+      title: 'Begur has more ads on Airnbnb than real homes in the town',
+      image: '',
+      description: 'According to data from the INE, there are <b>1,680 houses</b> in the entire municipality, while there are up to <b>2,088 different apartments</b> on airbnb.Although it is very likely that this mismatch is due to the fact that part of the apartments are rented by rooms, this fact is a good indicator of how tourism prevails in certain areas',
+      location: {
+        center: { lon: 3.16966, lat: 41.95200 },
+        zoom: 11.40,
+        pitch: 8.00,
+        bearing: -92.00
+      },
+      onChapterEnter: [ {
+        layer: 'airbnb-brand',
+        opacity: 0.7
+      },{
+        layer: 'Begur',
+        opacity: 0.5
+      } ],
       onChapterExit: [{
         layer: 'airbnb-brand',
         opacity: 0,
-
-   }]
+      },,{
+        layer: 'Begur',
+        opacity: 0
+      }]
     },
     {
       id: 'Costa Daurada',
@@ -131,8 +169,7 @@ bearing: -112.80
     onChapterEnter: [ {
       layer: 'airbnb-fill',
       opacity: 0.7,
-
- }],
+    }],
     onChapterExit: [{
       layer: 'airbnb-fill',
       opacity: 0,

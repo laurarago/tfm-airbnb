@@ -7,8 +7,11 @@
     <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.3.1/mapbox-gl.js"></script>
     <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.3.1/mapbox-gl.css" rel="stylesheet" />
     <script src="https://unpkg.com/intersection-observer@0.5.1/intersection-observer.js"></script>
+    <script type="text/javascript" src="https://aesqe.github.io/mapboxgl-minimap/mapboxgl-control-minimap.js"></script>
     <script src="https://unpkg.com/scrollama"></script>
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+
         body {
             margin:0; 
             padding:0; 
@@ -40,7 +43,7 @@
             font-size: 13px;
         }
         #features {
-            padding-top: 10vh;
+            padding-top: 5vh;
             padding-bottom: 10vh;
             z-index: 100;
         }
@@ -57,9 +60,12 @@
             margin-left: 62vw;
         }
         .light {
-            color: #444;
-            background-color: #fafafa;
+            background: #FFFEFE;
+            border: 1px solid #C0C0C0;
+            box-sizing: border-box;
         }
+     
+
         .dark {
             color: #fafafa;
             background-color: #444;
@@ -81,8 +87,38 @@
 
         .step img {
             width: 100%;
+            opacity: 1 !important;
+            margin: auto;
+
         }
 
+        h3 {
+            font-family: Bitter, OpenSans;
+            font-weight: 600;
+            font-size: 1.5em;
+            line-height: 30px;
+        }
+        p {
+            font-family: Bitter;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 1.2em;
+            line-height: 30px;
+        }
+
+        .mapboxgl-ctrl-minimap,  .mapboxgl-mapt {
+            z-index: 1;
+    margin: 0 auto;
+    width: 350px;
+    position: relative;
+    border: 1px solid hsla(0, 0%, 5%, 0.5);
+    box-sizing: border-box;
+    box-shadow: 0px 4px 4px rgba(151, 151, 151, 0.25) !important ;    
+    border-radius: 100em !important;
+    font-size: 0.9em !important;
+    font-family: 'Open Sans', sans-serif !important;
+
+        }
         @media (max-width: 750px) {
             #features {
                 width: 90vw;
@@ -222,6 +258,7 @@ var map = new mapboxgl.Map({
     bearing: config.chapters[0].location.bearing,
     pitch: config.chapters[0].location.pitch,
     scrollZoom: false,
+    attributionControl: true,
     transformRequest: transformRequest
 });
 
@@ -234,101 +271,110 @@ if (config.showMarkers) {
 var scroller = scrollama();
 
 map.on("load", function() {
-
     map.addSource("airbnb", {
     type: 'vector',
     url: 'mapbox://laurarago.2plwqw2z',
-});
+    });
+
+    map.addSource("Municipalities", {
+    type: 'vector',
+    url: 'mapbox://laurarago.8vqorl0k',
+    });
+
+
+
 
 var hoveredStateId =  null;
 var searched_lngLat = null;
 
-map.addLayer({
-'id': 'airbnb-fill',
-'type': 'circle',
-'source': 'airbnb',
-'source-layer': 'AirbnbData',
-'paint': {
-// make circles larger as the user zooms from z12 to z22
-'circle-radius': {
-    'base': 1.75,
-    'stops': [
-        [9, 2],
-        [10, 4],
-        [15, 7]
-    ]
-    },
-'circle-color': '#29DDC7',
-'circle-opacity': 0.7,
-'circle-stroke-color': '#29DDC7',
-'circle-stroke-width': ["case", ["boolean", ["feature-state", "hover"], false], 2, 0]}
-}, "settlement-subdivision-label");
+    map.addLayer({
+        'id': 'airbnb-fill',
+        'type': 'circle',
+        'source': 'airbnb',
+        'source-layer': 'AirbnbData',
+        'paint': {
+        // make circles larger as the user zooms from z12 to z22
+        'circle-radius': {
+            'base': 1.75,
+            'stops': [
+                [9, 2],
+                [10, 4],
+                [15, 7]
+            ]
+            },
+        'circle-color': '#29DDC7',
+        'circle-opacity': 0.7,
+        'circle-stroke-color': ["case", ["boolean", ["feature-state", "hover"], false], "black", "white"],
+        'circle-stroke-width': ["case", ["boolean", ["feature-state", "hover"], false], 2, 0]}
+    }, "settlement-subdivision-label");
 
-map.addLayer({
-'id': 'airbnb-brand',
-'type': 'circle',
-'source': 'airbnb',
-'source-layer': 'AirbnbData',
-'paint': {
-// make circles larger as the user zooms from z12 to z22
-'circle-radius': {
-    'base': 1.75,
-    'stops': [
-        [9, 2],
-        [10, 4],
-        [15, 7]
+    map.addLayer({
+        'id': 'airbnb-brand',
+        'type': 'circle',
+        'source': 'airbnb',
+        'source-layer': 'AirbnbData',
+        'paint': {
+            // make circles larger as the user zooms from z12 to z22
+            'circle-radius': {
+                'base': 1.75,
+                'stops': [
+                    [9, 2],
+                    [10, 4],
+                    [15, 7]
+                ]
+            },
+        'circle-color': ["match", ["get","RealData_brand"], "Costa Brava", "#FFD208", "#29DDC7"],
+        'circle-opacity': 0,
+        'circle-stroke-color': ["case", ["boolean", ["feature-state", "hover"], false], "black", "white"],
+        'circle-stroke-width': ["case", ["boolean", ["feature-state", "hover"], false], 2, 0]}
+    }, "settlement-subdivision-label");
 
-    ]
-    },
-'circle-color': ["match", ["get","RealData_brand"],
-        "Costa Brava", "#FFD100",
-        "#29DDC7"],
-'circle-opacity': 0,
-'circle-stroke-color': ["case", ["boolean", ["feature-state", "hover"], false], "black", "white"],
-'circle-stroke-width': ["case", ["boolean", ["feature-state", "hover"], false], 2, 0]}
-}, "settlement-subdivision-label");
-
-
-var popup = new mapboxgl.Popup({
-    closeButton: false,
-    closeOnClick: false,
-}); 
-
-map.on('mousemove', 'airbnb-fill', function(e) {
-    if (e.features.length > 0) {
-          if (hoveredStateId) {          
-            map.setFeatureState({ source: 'airbnb', 
-                                  sourceLayer: 'airbnb',
-                                  id: hoveredStateId}, { hover: false});
-          }
-          hoveredStateId = e.features[0].id;
-          map.setFeatureState({ source: 'airbnb', 
-                              sourceLayer: 'airbnb',
-                              id: hoveredStateId}, { hover: true});
+    map.addLayer({
+        'id': 'Roses',
+        'type': 'line',
+        'renderingMode': '2d',
+        'source': 'Municipalities',
+        'source-layer': 'Municipalities',
+        'filter': ['in', "cap_muni", "Roses"],
+        'paint': {
+        "line-color": "#333333",
+        "line-width": 4,
+        "line-opacity": 0
+        
         }
+            }, "settlement-subdivision-label");
 
-       map.getCanvas().style.cursor = 'pointer';
-
-        var coordinates = e.features[0].geometry.coordinates.slice();
-        var municipio = e.features[0].properties.Source;
-        var distrito = e.features[0].properties.room_type;
-        var renta = e.features[0].properties.capacity.toLocaleString('es-ES');
-
-         popup.setLngLat(e.lngLat)
-         .setHTML("<div style='color:black;font-size:14px;text-align:center;font-family: OpenSans, Open Sans;padding-bottom:3px'><b>" + municipio + "</b><p style='color:grey'> Distrito: " + distrito +  "</div><hr><div style='padding-top: 4px; font-size: 14px;font-family: Open Sans;text-align: center;'>" + "<span ><b>Renta</b></br></span><b style='color:#323232'>" + renta + " €</b></div>")
-         .addTo(map);
-  });   
-
-  map.on('mouseleave', 'airbnb-fill', function() {
-      map.getCanvas().style.cursor = '';
-        popup.remove();
-        if (hoveredStateId) {          
-          map.setFeatureState({ source: 'airbnb', 
-                                sourceLayer: 'airbnb',    
-                                id: hoveredStateId}, { hover: false});
+            map.addLayer({
+        'id': 'Begur',
+        'type': 'line',
+        'renderingMode': '2d',
+        'source': 'Municipalities',
+        'source-layer': 'Municipalities',
+        'filter': ['in', "cap_muni", "Begur"],
+        'paint': {
+        "line-color": "#333333",
+        "line-width": 4,
+        "line-opacity": 0
+        
         }
-        hoveredStateId = null;
-      });
+            }, "settlement-subdivision-label");
+
+
+map.addControl(new mapboxgl.Minimap({
+    id: "mapboxgl-minimap",
+    width: "25vh",
+    height: "25vh",
+    style: "mapbox://styles/laurarago/ckq1iuxap0wkk17p96m3vsgkj",
+    lineColor: "#29DDC7",
+    lineWidth: 1,
+    lineOpacity: 1,
+    fillColor: "#29DDC7",
+    fillOpacity: 0.25,
+    center: { lon: 1.61177, lat: 41.70028 },
+        zoom: 4.7,
+            zoomLevels: []
+        }), 'bottom-right');
+
     // setup the instance, pass callback functions
     scroller
     .setup({
