@@ -1,32 +1,11 @@
-let dataset, dataset2, svg, points, grid, finalData, finalData_noBCN
+let svg, points, grid, finalData, finalData_noBCN
 let popAxis, popAxis_noBCN, airbnbAxis, airbnbAxis_noBCN, airbnbPerAxis
 let airbnbScale, airbnbPerScale, popScale, popScale_noBCN
-let blue, yellow
+let blue, yellow, teal, orange
 let simulation, nodes
 let categoryLegend, salaryLegend
 let fillScale, square
 
-
-// const categories = ['Engineering', 'Business', 'Physical Sciences', 'Law & Public Policy', 'Computers & Mathematics', 'Agriculture & Natural Resources',
-// 'Industrial Arts & Consumer Services','Arts', 'Health','Social Science', 'Biology & Life Science','Education','Humanities & Liberal Arts',
-// 'Psychology & Social Work','Communications & Journalism','Interdisciplinary']
-
-// const categoriesXY = {'Engineering': [0, 400, 57382, 23.9],
-//                         'Business': [0, 600, 43538, 48.3],
-//                         'Physical Sciences': [0, 800, 41890, 50.9],
-//                         'Law & Public Policy': [0, 200, 42200, 48.3],
-//                         'Computers & Mathematics': [200, 400, 42745, 31.2],
-//                         'Agriculture & Natural Resources': [200, 600, 36900, 40.5],
-//                         'Industrial Arts & Consumer Services': [200, 800, 36342, 35.0],
-//                         'Arts': [200, 200, 33062, 60.4],
-//                         'Health': [400, 400, 36825, 79.5],
-//                         'Social Science': [400, 600, 37344, 55.4],
-//                         'Biology & Life Science': [400, 800, 36421, 58.7],
-//                         'Education': [400, 200, 32350, 74.9],
-//                         'Humanities & Liberal Arts': [600, 400, 31913, 63.2],
-//                         'Psychology & Social Work': [600, 600, 30100, 79.4],
-//                         'Communications & Journalism': [600, 800, 34500, 65.9],
-//                         'Interdisciplinary': [600, 200, 35000, 77.1]}
 
 const margin = {left: 140, top: 125, bottom: 35, right: 20}
 const width = 850 - margin.left - margin.right
@@ -49,45 +28,6 @@ const brandCodes = {
 
 // ************************** LOADING DATA **************************//
 
-d3.csv('data/recent-grads.csv', function(d){
-    return {
-        Major: d.Major,
-        Total: +d.Total,
-        Men: +d.Men,
-        Women: +d.Women,
-        Median: +d.Median,
-        Unemployment: +d.Unemployment_rate,
-        Category: d.Major_category,
-        ShareWomen: +d.ShareWomen, 
-        HistCol: +d.Histogram_column,
-        Midpoint: +d.midpoint
-    };
-}).then(data => {
-    dataset = data
-    // console.log(dataset)
-    //createScales()
-    //setTimeout(drawInitial(), 100)
-}) 
-
-
-// d3.csv('data/data_070621.csv', function(d){
-//     return {
-//         muni: d.Municipality,
-//         brand: d.brand,
-//         brandCode: brandCodes[d.brand],
-//         codemuni: d.IdescatCode,
-//         Perc_Tourist: +d.Perc_TuristicHousehols,
-//         centroix: +d.X,
-//         centroiy: +d.Y
-//     };
-// }).then(data2 => {
-//     dataset2 = data2
-//     // console.log(dataset2)
-//     createScales()
-//     setupGrid()
-//     setTimeout(drawInitial(), 100)
-// })
-
 d3.csv('data/RealData.csv', function(d){
     return {
         Perc_Tourist: +d.Perc_TuristicHouseholds_INE,
@@ -103,9 +43,9 @@ d3.csv('data/RealData.csv', function(d){
         airbnb: +d.airbnb,
         brandCode: brandCodes[d.brand]
     };
-}).then(data3 => {
-    finalData = data3
-    console.log(finalData)
+}).then(data => {
+    finalData = data
+    // console.log(finalData)
     createScales()
     setupGrid()
     setTimeout(drawInitial(), 100)
@@ -150,7 +90,9 @@ function createScales(){
 
     // COLOR STUFF
     blue = '#7bd2ed';
-    yellow = '#ffd208'
+    yellow = '#ffd208';
+    teal = '#29DDC7';
+    orange = '#FF852F';
 
     fillScale = d3.scaleSequential(d3.interpolatePuBu)
     //fillScale = d3.scaleSequential(d3.interpolateGnBu)
@@ -173,43 +115,6 @@ function createLegend(x, y){
     d3.select('.categoryLegend')
         .call(categoryLegend)
 }
-
-// function createSizeLegend(){
-//     let svg = d3.select('#legend2')
-//     svg.append('g')
-//         .attr('class', 'sizeLegend')
-//         .attr('transform', `translate(100,50)`)
-
-//     sizeLegend2 = d3.legendSize()
-//         .scale(salarySizeScale)
-//         .shape('circle')
-//         .shapePadding(15)
-//         .title('Salary Scale')
-//         .labelFormat(d3.format("$,.2r"))
-//         .cells(7)
-
-//     d3.select('.sizeLegend')
-//         .call(sizeLegend2)
-// }
-
-// function createSizeLegend2(){
-//     let svg = d3.select('#legend3')
-//     svg.append('g')
-//         .attr('class', 'sizeLegend2')
-//         .attr('transform', `translate(50,100)`)
-
-//     sizeLegend2 = d3.legendSize()
-//         .scale(enrollmentSizeScale)
-//         .shape('circle')
-//         .shapePadding(55)
-//         .orient('horizontal')
-//         .title('Enrolment Scale')
-//         .labels(['1000', '200000', '400000'])
-//         .labelOffset(30)
-//         .cells(3)
-
-//     d3.select('.sizeLegend2')
-//         .call(sizeLegend2)
 
 // }
 // **************************  END DECLARATION VARS LEGENDS AND SCALES **************************//
@@ -255,7 +160,9 @@ function createLegend(x, y){
 
         // grid.init();
 
-        const GRID_ROWS = Math.ceil(finalData.length / GRID_COLS);        
+        const GRID_ROWS = Math.ceil(finalData.length / GRID_COLS); 
+        console.log(GRID_ROWS) 
+        console.log(GRID_COLS)      
             
         grid = {
             cells : [],
@@ -314,7 +221,7 @@ function createLegend(x, y){
             }
         }
 
-        points = finalData.map(d => Object.create(d));
+        // points = finalData.map(d => Object.create(d));
 
     }
       
@@ -369,30 +276,30 @@ function drawInitial(){
             .attr("cy", d => d.y)
         });
 
-    drag = simulation => {
+    // drag = simulation => {
 
-        function dragstarted(d) {
-            if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-            d.fx = d.x;
-            d.fy = d.y;
-        }
+    //     function dragstarted(d) {
+    //         if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+    //         d.fx = d.x;
+    //         d.fy = d.y;
+    //     }
         
-        function dragged(d) {
-            d.fx = d3.event.x;
-            d.fy = d3.event.y;
-        }
+    //     function dragged(d) {
+    //         d.fx = d3.event.x;
+    //         d.fy = d3.event.y;
+    //     }
         
-        function dragended(d) {
-            if (!d3.event.active) simulation.alphaTarget(0);
-            d.fx = null;
-            d.fy = null;
-        } 
+    //     function dragended(d) {
+    //         if (!d3.event.active) simulation.alphaTarget(0);
+    //         d.fx = null;
+    //         d.fy = null;
+    //     } 
         
-        return d3.drag()
-            .on("start", dragstarted)
-            .on("drag", dragged)
-            .on("end", dragended);
-    }
+    //     return d3.drag()
+    //         .on("start", dragstarted)
+    //         .on("drag", dragged)
+    //         .on("end", dragended);
+    // }
 
     simulation.stop()
 
@@ -404,179 +311,59 @@ function drawInitial(){
         .selectAll('circle')
         .data(finalData)
         .join('circle')
-            .attr('fill', d => fillScale(d.Perc_Tourist))
+            .attr('fill', d => d.airbnb > 0 ? teal : orange)
             .attr('margin-left', 100)
             .attr('r', 3)
             .attr('cx', d => map_0_xScale(d.x))
             .attr('cy', d => map_0_yScale(d.y))
-            //.attr('opacity', 0.8)
-
 
     
     // MOUSE EVENTS - ALL CIRCLES/SQUARES
     // **********************************
     // Add mouseover and mouseout events for all circles
     // Changes opacity and adds border
-    svg.selectAll('circle')
-        .on('mouseover', mouseOver)
-        .on('mouseout', mouseOut)
+    // svg.selectAll('circle')
+    //     .on('mouseover', mouseOver)
+    //     .on('mouseout', mouseOut)
 
-    function mouseOver(d, i){
+    // function mouseOver(d, i){
 
-        /*console.log('hi')
-        d3.select(this)
-            .transition('mouseover').duration(100)
-            .attr('opacity', 1)
-            .attr('stroke-width', 5)
-            .attr('stroke', 'black')
+    //     /*console.log('hi')
+    //     d3.select(this)
+    //         .transition('mouseover').duration(100)
+    //         .attr('opacity', 1)
+    //         .attr('stroke-width', 5)
+    //         .attr('stroke', 'black')
             
-        d3.select('#tooltip')
-            .style('left', (d3.event.pageX + 10)+ 'px')
-            .style('top', (d3.event.pageY - 25) + 'px')
-            .style('display', 'inline-block')
-            .html(`<strong>Major:</strong> ${d.Major[0] + d.Major.slice(1,).toLowerCase()} 
-                <br> <strong>Median Salary:</strong> $${d3.format(",.2r")(d.Median)} 
-                <br> <strong>Category:</strong> ${d.Category}
-                <br> <strong>% Female:</strong> ${Math.round(d.ShareWomen*100)}%
-                <br> <strong># Enrolled:</strong> ${d3.format(",.2r")(d.Total)}`)*/
-    }
+    //     d3.select('#tooltip')
+    //         .style('left', (d3.event.pageX + 10)+ 'px')
+    //         .style('top', (d3.event.pageY - 25) + 'px')
+    //         .style('display', 'inline-block')
+    //         .html(`<strong>Major:</strong> ${d.Major[0] + d.Major.slice(1,).toLowerCase()} 
+    //             <br> <strong>Median Salary:</strong> $${d3.format(",.2r")(d.Median)} 
+    //             <br> <strong>Category:</strong> ${d.Category}
+    //             <br> <strong>% Female:</strong> ${Math.round(d.ShareWomen*100)}%
+    //             <br> <strong># Enrolled:</strong> ${d3.format(",.2r")(d.Total)}`)*/
+    // }
     
-    function mouseOut(d, i){
-        d3.select('#tooltip')
-            .style('display', 'none')
+    // function mouseOut(d, i){
+    //     d3.select('#tooltip')
+    //         .style('display', 'none')
 
-        d3.select(this)
-            .transition('mouseout').duration(100)
-            .attr('opacity', 0.8)
-            .attr('stroke-width', 0)
-    }
-
-
+    //     d3.select(this)
+    //         .transition('mouseout').duration(100)
+    //         .attr('opacity', 0.8)
+    //         .attr('stroke-width', 0)
+    // }
 
 
-    // TEXTS FOR AXIS Y - ADDING TO SVG
-    // ********************************
-    //Small text label for map 0
-    /*svg.selectAll('.small-text-map-0')
-        .data(dataset2)
-        .enter()
-        .append('text')
-            .text((d, i) => d.centroiy)
-            .attr('class', 'small-text-map-0')
-            .attr('x', margin.left)
-            .attr('y', (d, i) => i * 5.2 + 30)
-            .attr('font-size', 7)
-            .attr('text-anchor', 'end')*/
-
-
-    //Small text label for first graph
-    /*svg.selectAll('.small-text')
-        .data(dataset)
-        .enter()
-        .append('text')
-            .text((d, i) => d.Major.toLowerCase())
-            .attr('class', 'small-text')
-            .attr('x', margin.left)
-            .attr('y', (d, i) => i * 5.2 + 30)
-            .attr('font-size', 7)
-            .attr('text-anchor', 'end')*/
-    
-    //All the required components for the small multiples charts
-    //Initialises the text and rectangles, and sets opacity to 0 
-    // svg.selectAll('.cat-rect')
-    //     .data(categories).enter()
-    //     .append('rect')
-    //         .attr('class', 'cat-rect')
-    //         .attr('x', d => categoriesXY[d][0] + 120 + 1000)
-    //         .attr('y', d => categoriesXY[d][1] + 30)
-    //         .attr('width', 160)
-    //         .attr('height', 30)
-    //         .attr('opacity', 0)
-    //         .attr('fill', 'grey')
-
-
-    // svg.selectAll('.lab-text')
-    //     .data(categories).enter()
-    //     .append('text')
-    //     .attr('class', 'lab-text')
-    //     .attr('opacity', 0)
-    //     .raise()
-
-    // svg.selectAll('.lab-text')
-    //     .text(d => `Average: $${d3.format(",.2r")(categoriesXY[d][2])}`)
-    //     .attr('x', d => categoriesXY[d][0] + 200 + 1000)
-    //     .attr('y', d => categoriesXY[d][1] - 500)
-    //     .attr('font-family', 'Domine')
-    //     .attr('font-size', '12px')
-    //     .attr('font-weight', 700)
-    //     .attr('fill', 'black')
-    //     .attr('text-anchor', 'middle')       
-
-    // svg.selectAll('.lab-text')
-    //         .on('mouseover', function(d, i){
-    //             d3.select(this)
-    //                 .text(d)
-    //         })
-    //         .on('mouseout', function(d, i){
-    //             d3.select(this)
-    //                 .text(d => `Average: $${d3.format(",.2r")(categoriesXY[d][2])}`)
-    //         })
-
-
-    // Best fit line for gender scatter plot
-    // const bestFitLine = [{x: 0, y: 56093}, {x: 1, y: 25423}]
-    // const lineFunction = d3.line()
-    //                         .x(d => shareWomenXScale(d.x))
-    //                         .y(d => salaryYScale(d.y))
-
-    // // Axes for Scatter Plot
-    // svg.append('path')
-    //     .transition('best-fit-line').duration(430)
-    //         .attr('class', 'best-fit')
-    //         .attr('d', lineFunction(bestFitLine))
-    //         .attr('stroke', 'grey')
-    //         .attr('stroke-dasharray', 6.2)
-    //         .attr('opacity', 0)
-    //         .attr('stroke-width', 3)
-
-    // let scatterxAxis = d3.axisBottom(shareWomenXScale)
-    // let scatteryAxis = d3.axisLeft(salaryYScale).tickSize([width])
-
-    // svg.append('g')
-    //     .call(scatterxAxis)
-    //     .attr('class', 'scatter-x')
-    //     .attr('opacity', 0)
-    //     .attr('transform', `translate(0, ${height + margin.top})`)
-    //     .call(g => g.select('.domain')
-    //         .remove())
-    
-    // svg.append('g')
-    //     .call(scatteryAxis)
-    //     .attr('class', 'scatter-y')
-    //     .attr('opacity', 0)
-    //     .attr('transform', `translate(${margin.left - 20 + width}, 0)`)
-    //     .call(g => g.select('.domain')
-    //         .remove())
-    //     .call(g => g.selectAll('.tick line'))
-    //         .attr('stroke-opacity', 0.2)
-    //         .attr('stroke-dasharray', 2.5)
-
-    // Axes for Histogram 
-
-    // let histxAxis = d3.axisBottom(enrollmentScale)
-
-    // svg.append('g')
-    //     .attr('class', 'enrolment-axis')
-    //     .attr('transform', 'translate(0, 700)')
-    //     .attr('opacity', 0)
-    //     .call(histxAxis)
 
     // OUR AXES
-    let xAxis = d3.axisBottom(map_0_xScale)
-        .ticks(4)
-        .tickSize(height + 80)
+    // let xAxis = d3.axisBottom(map_0_xScale)
+    //     .ticks(4)
+    //     .tickSize(height + 80)
 
-    let yAxis = d3.axisLeft(map_0_yScale).tickSize([width])
+    // let yAxis = d3.axisLeft(map_0_yScale).tickSize([width])
 
     // AXIS FOR NUMBER OF AIRBNBS
     let airbnbAxis = d3.axisLeft(airbnbScale)
@@ -592,38 +379,67 @@ function drawInitial(){
             .attr("text-anchor", "start")
             .attr('font-weight', 'bold')
             .text('AirBnBs'))
-
-    // STILL NEED TO REVISE THESE!
     
-    // let airbnbAxis_noBCN = svg.append('g')
-    //     .attr("transform", `translate(${margin.left},0)`)
-    //     .call(d3.axisLeft(airbnbScale_noBCN))
-    //     .call(g => g.select(".domain"))
-    //     .call(g => g.select(".tick:last-of-type text").clone()
-    //         .attr("x", 3)
-    //         .attr("text-anchor", "start")
-    //         .attr('font-weight', 'bold')
-    //         .text('AirBnBs'))
+    // NUMBER OF AIRBNBS WITHOUT BARCELONA
+    let airbnbAxis_noBCN = d3.axisLeft(airbnbScale_noBCN)
+    
+    svg.append('g')
+        .call(airbnbAxis_noBCN)
+        .attr('class', 'airbnbAxis_noBCN')
+        .attr('opacity', 0)
+        .attr("transform", `translate(${margin.left},0)`)
+        .call(g => g.select(".domain"))
+        .call(g => g.select(".tick:last-of-type text").clone()
+            .attr("x", 3)
+            .attr("text-anchor", "start")
+            .attr('font-weight', 'bold')
+            .text('AirBnBs'))
 
-    // let airbnbPerAxis = svg.append('g')
-    //     .attr("transform", `translate(${margin.left},0)`)
-    //     .call(d3.axisLeft(airbnbPerScale))
-    //     .call(g => g.select(".domain"))
-    //     .call(g => g.select(".tick:last-of-type text").clone()
-    //         .attr("x", 3)
-    //         .attr("text-anchor", "start")
-    //         .attr('font-weight', 'bold')
-    //         .text('percent AirBnB'))
+    // PERCENT AIRBNBS
+    let airbnbPerAxis = d3.axisLeft(airbnbPerScale)
+    
+    svg.append('g')
+        .call(airbnbPerAxis)
+        .attr('class', 'airbnbPerAxis')
+        .attr('opacity', 0)
+        .attr("transform", `translate(${margin.left},0)`)
+        .call(g => g.select(".domain"))
+        .call(g => g.select(".tick:last-of-type text").clone()
+            .attr("x", 3)
+            .attr("text-anchor", "start")
+            .attr('font-weight', 'bold')
+            .text('percent AirBnB'))
 
-    // let popAxis = svg.append('g')
-    //     .attr("transform", `translate(0,${height - margin.bottom})`)
-    //     .call(d3.axisBottom(popScale).ticks(width / 80))
-    //     .call(g => g.select(".tick:last-of-type text").clone()
-    //         .attr("x", -22)
-    //         .attr('y', 25)
-    //         .attr("text-anchor", "start")
-    //         .attr('font-weight', 'bold')
-    //         .text('population'))
+    // POPULATION
+    let popAxis = d3.axisBottom(popScale)
+    
+    svg.append('g')
+        .call(popAxis)
+        .attr('class', 'popAxis')
+        .attr('opacity', 0)
+        .attr("transform", `translate(0,${height - margin.bottom})`)
+        .call(g => g.select(".tick:last-of-type text").clone()
+            .attr("x", -22)
+            .attr('y', 25)
+            .attr("text-anchor", "start")
+            .attr('font-weight', 'bold')
+            .text('population'))
+    
+    // POPULATION WITHOUT BARCELONA
+    let popAxis_noBCN = d3.axisBottom(popScale_noBCN)
+
+    svg.append('g')
+        .call(popAxis_noBCN)
+        .attr('class', 'popAxis_noBCN')
+        .attr('opacity', 0)
+        .attr("transform", `translate(0,${height - margin.bottom})`)
+        .call(g => g.select(".tick:last-of-type text").clone()
+            .attr("x", -22)
+            .attr('y', 25)
+            .attr("text-anchor", "start")
+            .attr('font-weight', 'bold')
+            .text('population'))
+
 
 }
 
@@ -640,39 +456,37 @@ function drawInitial(){
 
 function clean(chartType){
     let svg = d3.select('#vis').select('svg')
-    if (chartType !== 'isDraw0'){
-        return
+    if (chartType !== 'isDraw0') {
+        console.log('this is clean draw0')
+        // no axes needed for the graph, but will need a legend of some kind
     }
-    if (chartType !== 'isDraw1'){
-        return
+    if (chartType !== 'isDraw1') {
+        console.log('this is clean draw1')
+        // no axes needed for the graph, but will need a legend of some kind
     }
-    if (chartType !== 'isDraw2'){
-        svg.select('airbnbAxis').transition().attr('opacity', 0)
+    if (chartType !== 'isDraw2') {
+        // need popAxis and airbnbAxis
+        svg.select('.airbnbAxis').transition().attr('opacity', 0)
+        svg.select('.popAxis').transition().attr('opacity', 0)
+        console.log('this is clean draw2')
+    }
+    if (chartType !== 'isDraw3') {
+        // need popScale_noBCN and airbnbScale_noBCN
+        svg.select('.airbnbAxis_noBCN').transition().attr('opacity', 0)
+        svg.select('.popAxis').transition().attr('opacity', 0)
+        console.log('this is clean draw3')
+    }
+    if (chartType !== 'isDraw4') {
+        // need popScale_noBCN, airbnbPerScale
+        svg.select('.airbnbPerAxis').transition().attr('opacity', 0)
+        svg.select('.popAxis_noBCN').transition().attr('opacity', 0)
+    }
+    if (chartType !== 'isDraw5') {
+        // need popAxis_noBCN, airbnbPerAxis
+        svg.select('.airbnbPerAxis').transition().attr('opacity', 0)
+        svg.select('.popAxis_noBCN').transition().attr('opacity', 0)
     }
 
-    // EXAMPLE CLEAN FUNCTION BELOW
-    // if (chartType !== "isScatter") {
-    //     svg.select('.scatter-x').transition().attr('opacity', 0)
-    //     svg.select('.scatter-y').transition().attr('opacity', 0)
-    //     svg.select('.best-fit').transition().duration(200).attr('opacity', 0)
-    // }
-    // if (chartType !== "isMultiples"){
-    //     svg.selectAll('.lab-text').transition().attr('opacity', 0)
-    //         .attr('x', 1800)
-    //     svg.selectAll('.cat-rect').transition().attr('opacity', 0)
-    //         .attr('x', 1800)
-    // }
-    // if (chartType !== "isFirst"){
-    //     svg.select('.first-axis').transition().attr('opacity', 0)
-    //     svg.selectAll('.small-text').transition().attr('opacity', 0)
-    //         .attr('x', -200)
-    // }
-    // if (chartType !== "isHist"){
-    //     svg.selectAll('.hist-axis').transition().attr('opacity', 0)
-    // }
-    // if (chartType !== "isBubble"){
-    //     svg.select('.enrolment-axis').transition().attr('opacity', 0)
-    // }
 }
 
 // ************************** END CLEAN FUNCTION **************************//
@@ -682,7 +496,6 @@ function clean(chartType){
 
 //First draw function
 function draw0(){
-    //Stop simulation
     simulation.stop()
     
     let svg = d3.select("#vis")
@@ -690,26 +503,26 @@ function draw0(){
                     .attr('width', 1000)
                     .attr('height', 950)
     
-    clean('isFirst')
+    clean('isDraw0')
 
-    d3.select('.categoryLegend').transition().remove()
+    // d3.select('.categoryLegend').transition().remove()
 
-    svg.select('.first-axis')
-        .attr('opacity', 1)
+    // svg.select('.first-axis')
+    //     .attr('opacity', 1)
 
     console.log("hi 0")
     
     svg.selectAll('circle')
         .transition().duration(500).delay(100)
-        .attr('fill', d => fillScale(d.Perc_Tourist))
+        .attr('fill', d => d.airbnb > 0 ? teal : yellow)
         .attr('r', 3)
         .attr('cx', d => map_0_xScale(d.x))
         .attr('cy', d => map_0_yScale(d.y))
 
-    svg.selectAll('.small-text-map-0').transition()
-        .attr('opacity', 1)
-        .attr('x', margin.left)
-        .attr('y', (d, i) => i * 5.2 + 30)
+    // svg.selectAll('.small-text-map-0').transition()
+    //     .attr('opacity', 1)
+    //     .attr('x', margin.left)
+    //     .attr('y', (d, i) => i * 5.2 + 30)
 }
 
 
@@ -717,34 +530,42 @@ function draw1(){
     console.log("hi 1")
 
     let svg = d3.select("#vis").select('svg')
+    clean('isDraw1')
 
-    // clean('none')
-
-    // simulation
-    //     .force("center", d3.forceCenter(width / 2, height / 1.5))
-    
-    // simulation.alpha(1).restart()
+    // THIS IS NOT WORKING
+    nodes = svg.selectAll('circle')
+        .attr('fill', d => d.airbnb > 0 ? teal : yellow)
+        .attr('r', 3)
 
     // svg.selectAll('circle')
-    //     .attr('fill', d => fillScale(d.Perc_Tourist))
-    //     .transition().duration(300).delay((d, i) => i * 2)
-    //     .call(drag(simulation))
+    //     .transition().duration(800).ease(d3.easeBack)
+    //     .attr('r', 3)
+    //     .attr('fill', d => d.airbnb > 0 ? blue : yellow)
+        // .call(drag(simulation))
 
+    simulation
+        .force("center", d3.forceCenter(width / 2, height / 2))
+    
+    // simulation.alpha(1).restart()
 }
 
 
 function draw2(){
+    simulation.stop()
+
     let svg = d3.select("#vis").select('svg')
-    // clean('isDraw2')
+    clean('isDraw2')
 
     // need popAxis and airbnbAxis
+    svg.selectAll('.popAxis').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
+    svg.selectAll('.airbnbAxis').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
     
     svg.selectAll('circle')
         .transition().duration(800).ease(d3.easeBack)
         .attr('cx', d => popScale(d.population))
         .attr('cy', d => airbnbScale(d.airbnb))
         .attr('r', 5)
-        .attr('fill', blue)
+        .attr('fill', teal)
         .attr('opacity', 0.7)
         
     
@@ -752,16 +573,18 @@ function draw2(){
 
 function draw3(){
     let svg = d3.select("#vis").select('svg')
-    // clean('isDraw3')
+    clean('isDraw3')
 
     // need popScale_noBCN and airbnbScale_noBCN
+    svg.selectAll('.popAxis_noBCN').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
+    svg.selectAll('.airbnbAxis_noBCN').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
 
     svg.selectAll('circle')
         .transition().duration(800).ease(d3.easeBack)
         .attr('cx', d => popScale_noBCN(d.population))
         .attr('cy', d => airbnbScale_noBCN(d.airbnb))
         .attr('r', 5)
-        .attr('fill', d => d.municipality == 'Barcelona' ? 'none' : blue)
+        .attr('fill', d => d.municipality == 'Barcelona' ? 'none' : teal)
         .attr('opacity', 0.7)
         
 }
@@ -772,97 +595,52 @@ function draw4(){
     clean('isDraw4')
 
     // need popScale_noBCN, airbnbPerScale
+    svg.selectAll('.popAxis_noBCN').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
+    svg.selectAll('.airbnbPerAxis').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
 
     svg.selectAll('circle')
         .transition().duration(800).ease(d3.easeBack)
         .attr('cx', d => popScale_noBCN(d.population))
         .attr('cy', d => airbnbPerScale(d.perc_Airbnb))
         .attr('r', 5)
-        .attr('fill', d => d.municipality == 'Barcelona' ? 'none' : blue)
+        .attr('fill', d => d.municipality == 'Barcelona' ? 'none' : teal)
         .attr('opacity', 0.7)
 
 }
 
 function draw5(){    
     let svg = d3.select("#vis").select("svg")
-    // clean('isDraw5')
+    clean('isDraw5')
 
     // need popAxis_noBCN, airbnbPerAxis
+    svg.selectAll('.popAxis_noBCN').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
+    svg.selectAll('.airbnbPerAxis').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
 
     svg.selectAll('circle')
         .transition().duration(800).ease(d3.easeBack)
         .attr('cx', d => popScale_noBCN(d.population))
         .attr('cy', d => airbnbPerScale(d.perc_Airbnb))
         .attr('r', 5)
-        .attr('fill', d => {if (d.brand == 'Costa Brava'){ return yellow } if (d.municipality == 'Barcelona'){ return 'none' } else { return blue }})
+        .attr('fill', d => {if (d.brand == 'Costa Brava'){ return yellow } if (d.municipality == 'Barcelona'){ return 'none' } else { return teal }})
         .attr('opacity', 0.7)
 }
 
-// function draw7(){
-//     let svg = d3.select('#vis').select('svg')
+function draw6(){
+    let svg = d3.select('#vis').select('svg')
 
-//     clean('isBubble')
+    clean('isDraw6')
 
-//     simulation
-//         .force('forceX', d3.forceX(d => enrollmentScale(d.Total)))
-//         .force('forceY', d3.forceY(500))
-//         .force('collide', d3.forceCollide(d => enrollmentSizeScale(d.Total) + 2))
-//         .alpha(0.8).alphaDecay(0.05).restart()
+    svg.selectAll('circle')
+        .transition().duration(500).delay(100)
+        .attr('fill', d => fillScale(d.perc_Airbnb))
+        .attr('r', 3)
+        .attr('cx', d => map_0_xScale(d.x))
+        .attr('cy', d => map_0_yScale(d.y))
 
-//     svg.selectAll('circle')
-//         .transition().duration(300).delay((d, i) => i * 4)
-//         .attr('r', d => enrollmentSizeScale(d.Total))
-//         .attr('fill', d => categoryColorScale(d.Category))
+}
 
-//     //Show enrolment axis (remember to include domain)
-//     svg.select('.enrolment-axis').attr('opacity', 0.5).selectAll('.domain').attr('opacity', 1)
-
-// }
-
-// function draw4(){
-//     let svg = d3.select('#vis').select('svg')
-
-//     clean('isHist')
-
-//     simulation.stop()
-
-//     svg.selectAll('circle')
-//         .transition().duration(600).delay((d, i) => i * 2).ease(d3.easeBack)
-//             .attr('r', 10)
-//             .attr('cx', d => histXScale(d.Midpoint))
-//             .attr('cy', d => histYScale(d.HistCol))
-//             .attr('fill', d => categoryColorScale(d.Category))
-
-//     let xAxis = d3.axisBottom(histXScale)
-//     svg.append('g')
-//         .attr('class', 'hist-axis')
-//         .attr('transform', `translate(0, ${height + margin.top + 10})`)
-//         .call(xAxis)
-
-//     svg.selectAll('.lab-text')
-//         .on('mouseout', )
-// }
-
-// function draw8(){
-//     clean('none')
-
-//     let svg = d3.select('#vis').select('svg')
-//     svg.selectAll('circle')
-//         .transition()
-//         .attr('r', d => salarySizeScale(d.Median) * 1.6)
-//         .attr('fill', d => categoryColorScale(d.Category))
-
-//     simulation 
-//         .force('forceX', d3.forceX(500))
-//         .force('forceY', d3.forceY(500))
-//         .force('collide', d3.forceCollide(d => salarySizeScale(d.Median) * 1.6 + 4))
-//         .alpha(0.6).alphaDecay(0.05).restart()
-        
-// }
 
 // ************************** END ALL DRAW FUNCTIONS **************************//
-
-
 
 
 
@@ -877,13 +655,9 @@ let activationFunctions = [
     draw2,
     draw3,
     draw4,
-    draw5
-    // draw6, 
-    // draw7,
-    // draw8
+    draw5,
+    draw6 
 ]
-
-
 
 //All the scrolling function
 //Will draw a new graph based on the index provided by the scroll
