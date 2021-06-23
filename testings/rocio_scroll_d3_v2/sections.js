@@ -568,34 +568,31 @@ function drawInitial(){
     
     // ANNOTATIONS
     // points to annotate
-    const salou = finalData.filter(d => d.municipality == 'Salou')
-    const salou_pop = popScale_noBCN(salou[0].population)
-    const salou_perAir = airbnbPerScale(salou[0].perc_Airbnb)
-    console.log(salou[0].population)
-    console.log(airbnbPerScale(salou[0].population))
+    const begur = finalData.filter(d => d.municipality == 'Begur')
+    const begur_pop = popScale_noBCN(begur[0].population)
+    const begur_perAir = airbnbPerScale(begur[0].perc_Airbnb)
 
     // create annotation details
-    annotation1 = [{
+    annotation_begur = [{
         note: {
-            title: 'Title',
-            label: 'Here is the label text'
+            title: 'Begur'
         },
-        x: salou_pop,
-        y: salou_perAir,
+        x: begur_pop,
+        y: begur_perAir,
         dy: 50,
         dx: 50,
         subject: { radius: 10, radiusPadding: 10 }
     }]
 
     // make the annotations
-    makeAnnotation1 = d3.annotation()
-                        .annotations(annotation1)
-                        .type(d3.annotationCalloutCircle)
+    makeAnnotation_begur = d3.annotation()
+                            .annotations(annotation_begur)
+                            .type(d3.annotationCalloutCircle)
 
     svg.append('g')
         .attr('opacity', 0)
-        .attr('class', 'annotation1')
-        .call(makeAnnotation1)
+        .attr('class', 'annotation_begur')
+        .call(makeAnnotation_begur)
 
 }
 
@@ -632,6 +629,7 @@ function clean(chartType){
         // need popScale_noBCN, airbnbPerScale
         svg.select('.airbnbPerAxis').transition().attr('opacity', 0)
         svg.select('.popAxis_noBCN').transition().attr('opacity', 0)
+        svg.select('.annotation_begur').transition().attr('opacity', 0)
     }
     if (chartType !== 'isDraw5') {
         // need popAxis_noBCN, airbnbPerAxis
@@ -733,6 +731,7 @@ function draw4(){
     // need popScale_noBCN, airbnbPerScale
     svg.selectAll('.popAxis_noBCN').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
     svg.selectAll('.airbnbPerAxis').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
+    svg.select('.annotation_begur').transition().attr('opacity', 1).delay(800)
 
     svg.selectAll('circle')
         .transition().duration(800).ease(d3.easeBack)
