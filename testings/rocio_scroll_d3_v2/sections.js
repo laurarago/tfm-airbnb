@@ -1,11 +1,12 @@
 let svg, points, grid, finalData, finalData_noBCN
 let popAxis, popAxis_noBCN, airbnbAxis, airbnbAxis_noBCN, airbnbPerAxis
 let airbnbScale, airbnbPerScale, popScale, popScale_noBCN
-let blue, yellow, teal, orange
+let blue, yellow, teal, orange, newblue
 let simulation, nodes
-let categoryLegend, salaryLegend
+let airbnbPerLegend
 let fillScale, square
-
+let annotation1
+let makeAnnotation1
 
 const margin = {left: 140, top: 125, bottom: 35, right: 20}
 const width = 850 - margin.left - margin.right
@@ -31,8 +32,8 @@ const brandCodes = {
 d3.csv('data/RealData.csv', function(d){
     return {
         Perc_Tourist: +d.Perc_TuristicHouseholds_INE,
-        x: +d.x,
-        y: +d.y,
+        mapX: +d.x, // this can't be called x or the force layout grid won't work!
+        mapY: +d.y, // this can't be called y or the force layout grid won't work!
         INECode: d.INECode,
         IdescatCode: d.IdescatCode,
         municipality: d.Municipality,
@@ -55,16 +56,12 @@ d3.csv('data/RealData.csv', function(d){
 
 
 
-
-
-
-
 // ************************** DECLARATION VARS LEGENDS AND SCALES **************************//
 
 
 function createScales(){
-    map_0_xScale = d3.scaleLinear(d3.extent(finalData, d => d.x), [margin.left, width - margin.right])
-    map_0_yScale = d3.scaleLinear(d3.extent(finalData, d => d.y), [height - margin.bottom, margin.top])
+    map_0_xScale = d3.scaleLinear(d3.extent(finalData, d => d.mapX), [margin.left, width - margin.right])
+    map_0_yScale = d3.scaleLinear(d3.extent(finalData, d => d.mapY), [height - margin.bottom, margin.top])
 
     finalData_noBCN = finalData.filter(d => d.municipality !== 'Barcelona')
 
@@ -89,32 +86,185 @@ function createScales(){
         .range([height - margin.bottom, margin.top])
 
     // COLOR STUFF
-    blue = '#7bd2ed';
-    yellow = '#ffd208';
-    teal = '#29DDC7';
-    orange = '#FF852F';
+    blue = '#7bd2ed'
+    yellow = '#ffd208'
+    teal = '#29DDC7'
+    orange = '#FF852F'
+    newblue = '#3B78E0'
 
-    fillScale = d3.scaleSequential(d3.interpolatePuBu)
+    // fillScale = d3.scaleSequential(d3.interpolatePuBu)
     //fillScale = d3.scaleSequential(d3.interpolateGnBu)
     //fillScale = d3.scaleLinear().domain([1,10]).range(["#ffffff", "#3da2a4"])
-    // fillScale = d3.scaleSequential(chroma.scale([lightColor, darkColor]))
+    fillScale = d3.scaleSequential(chroma.scale(['#fff', teal, newblue]))
 }
 
-function createLegend(x, y){
-    let svg = d3.select('#legend')
+function legend({
+    color,
+    title,
+    tickSize = 6,
+    width = 320,
+    height = 44 + tickSize,
+    marginTop = 18,
+    marginRight = 0,
+    marginBottom = 16 + tickSize,
+    marginLeft = 0,
+    ticks = width / 64,
+    tickFormat,
+    tickValues
+  } = {}) {
+    const svg = d3.select("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("viewBox", [0, 0, width, height])
+      .style("overflow", "visible")
+      .style("display", "block");
+  
+    let tickAdjust = g => g.selectAll(".tick line").attr("y1", marginTop + marginBottom - height);
+    let x;
+  
+    // Continuous
+    if (color.interpolate) {
+      const n = Math.min(color.domain().length, color.range().length);
+  
+      x = color.copy().rangeRound(d3.quantize(d3.interpolate(marginLeft, width - marginRight), n));
+  
+      svg.append("image")
+        .attr("x", marginLeft)
+        .attr("y", marginTop)
+        .attr("width", width - marginLeft - marginRight)
+        .attr("height", height - marginTop - marginBottom)
+        .attr("preserveAspectRatio", "none")
+        .attr("xlink:href", ramp(color.copy().domain(d3.quantize(d3.interpolate(0, 1), n))).toDataURL());
+    }
+  
+    // Sequential
+    else if (color.interpolator) {
+      x = Object.assign(color.copy()
+        .interpolator(d3.interpolateRound(marginLeft, width - marginRight)), {
+          range() {
+            return [marginLeft, width - marginRight];
+          }
+        });
+  
+      svg.append("image")
+        .attr("x", marginLeft)
+        .attr("y", marginTop)
+        .attr("width", width - marginLeft - marginRight)
+        .attr("height", height - marginTop - marginBottom)
+        .attr("preserveAspectRatio", "none")
+        .attr("xlink:href", ramp(color.interpolator()).toDataURL());
+  
+      // scaleSequentialQuantile doesn’t implement ticks or tickFormat.
+      if (!x.ticks) {
+        if (tickValues === undefined) {
+          const n = Math.round(ticks + 1);
+          tickValues = d3.range(n).map(i => d3.quantile(color.domain(), i / (n - 1)));
+        }
+        if (typeof tickFormat !== "function") {
+          tickFormat = d3.format(tickFormat === undefined ? ",f" : tickFormat);
+        }
+      }
+    }
+  
+    // Threshold
+    else if (color.invertExtent) {
+      const thresholds = color.thresholds ? color.thresholds() // scaleQuantize
+        :
+        color.quantiles ? color.quantiles() // scaleQuantile
+        :
+        color.domain(); // scaleThreshold
+  
+      const thresholdFormat = tickFormat === undefined ? d => d :
+        typeof tickFormat === "string" ? d3.format(tickFormat) :
+        tickFormat;
+  
+      x = d3.scaleLinear()
+        .domain([-1, color.range().length - 1])
+        .rangeRound([marginLeft, width - marginRight]);
+  
+      svg.append("g")
+        .selectAll("rect")
+        .data(color.range())
+        .join("rect")
+        .attr("x", (d, i) => x(i - 1))
+        .attr("y", marginTop)
+        .attr("width", (d, i) => x(i) - x(i - 1))
+        .attr("height", height - marginTop - marginBottom)
+        .attr("fill", d => d);
+  
+      tickValues = d3.range(thresholds.length);
+      tickFormat = i => thresholdFormat(thresholds[i], i);
+    }
+  
+    // Ordinal
+    else {
+      x = d3.scaleBand()
+        .domain(color.domain())
+        .rangeRound([marginLeft, width - marginRight]);
+  
+      svg.append("g")
+        .selectAll("rect")
+        .data(color.domain())
+        .join("rect")
+        .attr("x", x)
+        .attr("y", marginTop)
+        .attr("width", Math.max(0, x.bandwidth() - 1))
+        .attr("height", height - marginTop - marginBottom)
+        .attr("fill", color);
+  
+      tickAdjust = () => {};
+    }
+  
+    svg.append("g")
+      .attr("transform", `translate(0,${height - marginBottom})`)
+      .call(d3.axisBottom(x)
+        .ticks(ticks, typeof tickFormat === "string" ? tickFormat : undefined)
+        .tickFormat(typeof tickFormat === "function" ? tickFormat : undefined)
+        .tickSize(tickSize)
+        .tickValues(tickValues))
+      .call(tickAdjust)
+      .call(g => g.select(".domain").remove())
+      .call(g => g.append("text")
+        .attr("x", marginLeft)
+        .attr("y", marginTop + marginBottom - height - 6)
+        .attr("fill", "currentColor")
+        .attr("text-anchor", "start")
+        .attr("font-weight", "bold")
+        .text(title));
+  
+    return svg.node();
+  }
+  
+function ramp(color, n = 256) {
+    var canvas = document.createElement('canvas');
+    canvas.width = n;
+    canvas.height = 1;
+    const context = canvas.getContext("2d");
+    for (let i = 0; i < n; ++i) {
+      context.fillStyle = color(i / (n - 1));
+      context.fillRect(i, 0, 1, 1);
+    }
+    return canvas;
+}
+  
 
-    svg.append('g')
-        .attr('class', 'categoryLegend')
-        .attr('transform', `translate(${x},${y})`)
+// function createLegend(x, y){
+//     let svg = d3.select('#legend')
 
-    categoryLegend = d3.legendColor()
-                            .shape('path', d3.symbol().type(d3.symbolCircle).size(150)())
-                            .shapePadding(10)
-                            .scale(categoryColorScale)
+//     console.log('this is createLegend')
+
+//     svg.append('g')
+//         .attr('class', 'airbnbPerLegend')
+//         .attr('transform', `translate(${x},${y})`)
+
+//     airbnbPerLegend = d3.legendColor()
+//                         .shape('path', d3.symbol().type(d3.symbolCircle).size(150)())
+//                         .shapePadding(10)
+//                         .scale(fillScale)
     
-    d3.select('.categoryLegend')
-        .call(categoryLegend)
-}
+//     d3.select('.airbnbPerLegend')
+//         .call(airbnbPerLegend)
+// }
 
 // }
 // **************************  END DECLARATION VARS LEGENDS AND SCALES **************************//
@@ -122,7 +272,7 @@ function createLegend(x, y){
 // **************************  SET UP OTHER VARIABLES **************************//
 
     // FOR 'BAR CHART'
-    function setupGrid() {    
+function setupGrid() {    
         const GRID_SIZE = 15; // controls how much space there is between each square
         const GRID_COLS = 4;
 
@@ -156,13 +306,11 @@ function createLegend(x, y){
             bar_rows: sorted.map(d => d.bar_rows)
         }
 
-        console.log(data_structure)
+        // console.log(data_structure)
 
         // grid.init();
 
-        const GRID_ROWS = Math.ceil(finalData.length / GRID_COLS); 
-        console.log(GRID_ROWS) 
-        console.log(GRID_COLS)      
+        const GRID_ROWS = Math.ceil(finalData.length / GRID_COLS);    
             
         grid = {
             cells : [],
@@ -223,7 +371,7 @@ function createLegend(x, y){
 
         // points = finalData.map(d => Object.create(d));
 
-    }
+}
       
 
 // **************************  END SET UP OTHER VARIABLES **************************//
@@ -238,16 +386,12 @@ function createLegend(x, y){
 // Each element should also have an associated class name for easy reference
 
 function drawInitial(){
-    // createSizeLegend()
-    // createSizeLegend2()
-
-    console.log("hi initial")
 
     let svg = d3.select("#vis")
-                    .append('svg')
-                    .attr('width', 1000)
-                    .attr('height', 950)
-                    .attr('opacity', 1)
+                .append('svg')
+                .attr('width', 1000)
+                .attr('height', 1000)
+                .attr('opacity', 1)
 
 
     // SIMULATION FORCES
@@ -276,31 +420,6 @@ function drawInitial(){
             .attr("cy", d => d.y)
         });
 
-    // drag = simulation => {
-
-    //     function dragstarted(d) {
-    //         if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-    //         d.fx = d.x;
-    //         d.fy = d.y;
-    //     }
-        
-    //     function dragged(d) {
-    //         d.fx = d3.event.x;
-    //         d.fy = d3.event.y;
-    //     }
-        
-    //     function dragended(d) {
-    //         if (!d3.event.active) simulation.alphaTarget(0);
-    //         d.fx = null;
-    //         d.fy = null;
-    //     } 
-        
-    //     return d3.drag()
-    //         .on("start", dragstarted)
-    //         .on("drag", dragged)
-    //         .on("end", dragended);
-    // }
-
     simulation.stop()
 
     // DRAW 0 - CATALONIA MAP - ADDING TO SVG
@@ -314,8 +433,8 @@ function drawInitial(){
             .attr('fill', d => d.airbnb > 0 ? teal : orange)
             .attr('margin-left', 100)
             .attr('r', 3)
-            .attr('cx', d => map_0_xScale(d.x))
-            .attr('cy', d => map_0_yScale(d.y))
+            .attr('cx', d => map_0_xScale(d.mapX))
+            .attr('cy', d => map_0_yScale(d.mapY))
 
     
     // MOUSE EVENTS - ALL CIRCLES/SQUARES
@@ -358,14 +477,9 @@ function drawInitial(){
 
 
 
-    // OUR AXES
-    // let xAxis = d3.axisBottom(map_0_xScale)
-    //     .ticks(4)
-    //     .tickSize(height + 80)
+    // CREATE ALL AXES — SET OPACITY TO 0
 
-    // let yAxis = d3.axisLeft(map_0_yScale).tickSize([width])
-
-    // AXIS FOR NUMBER OF AIRBNBS
+    // NUMBER OF AIRBNBS
     let airbnbAxis = d3.axisLeft(airbnbScale)
     
     svg.append('g')
@@ -440,6 +554,48 @@ function drawInitial(){
             .attr('font-weight', 'bold')
             .text('population'))
 
+    // LEGENDS
+    svg.append('g')
+        .attr('class', 'perAirbnbLegend')
+        .attr('opacity', 0)
+        .attr('transform', 'translate(500, 700)')
+        .append(() => legend({ 
+            color: fillScale, 
+            tickFormat: '%', 
+            title: 'Percent Airbnbs', 
+            width: 200
+        }))
+    
+    // ANNOTATIONS
+    // points to annotate
+    const salou = finalData.filter(d => d.municipality == 'Salou')
+    const salou_pop = popScale_noBCN(salou[0].population)
+    const salou_perAir = airbnbPerScale(salou[0].perc_Airbnb)
+    console.log(salou[0].population)
+    console.log(airbnbPerScale(salou[0].population))
+
+    // create annotation details
+    annotation1 = [{
+        note: {
+            title: 'Title',
+            label: 'Here is the label text'
+        },
+        x: salou_pop,
+        y: salou_perAir,
+        dy: 50,
+        dx: 50,
+        subject: { radius: 10, radiusPadding: 10 }
+    }]
+
+    // make the annotations
+    makeAnnotation1 = d3.annotation()
+                        .annotations(annotation1)
+                        .type(d3.annotationCalloutCircle)
+
+    svg.append('g')
+        .attr('opacity', 0)
+        .attr('class', 'annotation1')
+        .call(makeAnnotation1)
 
 }
 
@@ -452,29 +608,25 @@ function drawInitial(){
 
 // ************************** CLEAN FUNCTION **************************//
 
-//Will hide all the elements which are not necessary for a given chart type 
+// Will hide all the elements which are not necessary for a given chart type 
 
 function clean(chartType){
     let svg = d3.select('#vis').select('svg')
     if (chartType !== 'isDraw0') {
-        console.log('this is clean draw0')
         // no axes needed for the graph, but will need a legend of some kind
     }
     if (chartType !== 'isDraw1') {
-        console.log('this is clean draw1')
         // no axes needed for the graph, but will need a legend of some kind
     }
     if (chartType !== 'isDraw2') {
         // need popAxis and airbnbAxis
         svg.select('.airbnbAxis').transition().attr('opacity', 0)
         svg.select('.popAxis').transition().attr('opacity', 0)
-        console.log('this is clean draw2')
     }
     if (chartType !== 'isDraw3') {
         // need popScale_noBCN and airbnbScale_noBCN
         svg.select('.airbnbAxis_noBCN').transition().attr('opacity', 0)
         svg.select('.popAxis').transition().attr('opacity', 0)
-        console.log('this is clean draw3')
     }
     if (chartType !== 'isDraw4') {
         // need popScale_noBCN, airbnbPerScale
@@ -485,6 +637,10 @@ function clean(chartType){
         // need popAxis_noBCN, airbnbPerAxis
         svg.select('.airbnbPerAxis').transition().attr('opacity', 0)
         svg.select('.popAxis_noBCN').transition().attr('opacity', 0)
+    }
+    if (chartType !== 'isDraw6') {
+        // no axes needed for the graph, but will need a legend of some kind
+        svg.select('.perAirbnbLegend').attr('opacity', 0)
     }
 
 }
@@ -505,50 +661,30 @@ function draw0(){
     
     clean('isDraw0')
 
-    // d3.select('.categoryLegend').transition().remove()
-
-    // svg.select('.first-axis')
-    //     .attr('opacity', 1)
-
     console.log("hi 0")
     
     svg.selectAll('circle')
         .transition().duration(500).delay(100)
         .attr('fill', d => d.airbnb > 0 ? teal : yellow)
         .attr('r', 3)
-        .attr('cx', d => map_0_xScale(d.x))
-        .attr('cy', d => map_0_yScale(d.y))
+        .attr('cx', d => map_0_xScale(d.mapX))
+        .attr('cy', d => map_0_yScale(d.mapY))
 
-    // svg.selectAll('.small-text-map-0').transition()
-    //     .attr('opacity', 1)
-    //     .attr('x', margin.left)
-    //     .attr('y', (d, i) => i * 5.2 + 30)
 }
 
-
 function draw1(){
-    console.log("hi 1")
-
     let svg = d3.select("#vis").select('svg')
     clean('isDraw1')
-
-    // THIS IS NOT WORKING
-    nodes = svg.selectAll('circle')
-        .attr('fill', d => d.airbnb > 0 ? teal : yellow)
-        .attr('r', 3)
-
-    // svg.selectAll('circle')
-    //     .transition().duration(800).ease(d3.easeBack)
-    //     .attr('r', 3)
-    //     .attr('fill', d => d.airbnb > 0 ? blue : yellow)
-        // .call(drag(simulation))
 
     simulation
         .force("center", d3.forceCenter(width / 2, height / 2))
     
-    // simulation.alpha(1).restart()
-}
+    simulation.alpha(1).restart()
 
+    svg.selectAll('circle')
+        .transition().duration(800).ease(d3.easeBack)
+
+}
 
 function draw2(){
     simulation.stop()
@@ -564,7 +700,7 @@ function draw2(){
         .transition().duration(800).ease(d3.easeBack)
         .attr('cx', d => popScale(d.population))
         .attr('cy', d => airbnbScale(d.airbnb))
-        .attr('r', 5)
+        // .attr('r', 5)
         .attr('fill', teal)
         .attr('opacity', 0.7)
         
@@ -583,7 +719,7 @@ function draw3(){
         .transition().duration(800).ease(d3.easeBack)
         .attr('cx', d => popScale_noBCN(d.population))
         .attr('cy', d => airbnbScale_noBCN(d.airbnb))
-        .attr('r', 5)
+        // .attr('r', 5)
         .attr('fill', d => d.municipality == 'Barcelona' ? 'none' : teal)
         .attr('opacity', 0.7)
         
@@ -602,8 +738,8 @@ function draw4(){
         .transition().duration(800).ease(d3.easeBack)
         .attr('cx', d => popScale_noBCN(d.population))
         .attr('cy', d => airbnbPerScale(d.perc_Airbnb))
-        .attr('r', 5)
-        .attr('fill', d => d.municipality == 'Barcelona' ? 'none' : teal)
+        // .attr('r', 5)
+        .attr('fill', d => {if (d.municipality == 'Barcelona' || isNaN(d.perc_Airbnb)){ return 'none'} else { return teal }})
         .attr('opacity', 0.7)
 
 }
@@ -620,23 +756,24 @@ function draw5(){
         .transition().duration(800).ease(d3.easeBack)
         .attr('cx', d => popScale_noBCN(d.population))
         .attr('cy', d => airbnbPerScale(d.perc_Airbnb))
-        .attr('r', 5)
-        .attr('fill', d => {if (d.brand == 'Costa Brava'){ return yellow } if (d.municipality == 'Barcelona'){ return 'none' } else { return teal }})
+        // .attr('r', 5)
+        .attr('fill', d => {if (d.brand == 'Costa Brava'){ return yellow } if (d.municipality == 'Barcelona' || isNaN(d.perc_Airbnb)){ return 'none' } else { return teal }})
         .attr('opacity', 0.7)
 }
 
 function draw6(){
     let svg = d3.select('#vis').select('svg')
-
     clean('isDraw6')
 
     svg.selectAll('circle')
-        .transition().duration(500).delay(100)
-        .attr('fill', d => fillScale(d.perc_Airbnb))
-        .attr('r', 3)
-        .attr('cx', d => map_0_xScale(d.x))
-        .attr('cy', d => map_0_yScale(d.y))
+        .transition().duration(800).delay(100)
+        .attr('fill', d => d.perc_Airbnb ? fillScale(d.perc_Airbnb) : 'none')
+        // .attr('r', 3)
+        .attr('cx', d => map_0_xScale(d.mapX))
+        .attr('cy', d => map_0_yScale(d.mapY))
 
+        
+    svg.selectAll('.perAirbnbLegend').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
 }
 
 
