@@ -430,9 +430,10 @@ function drawInitial(){
         .selectAll('circle')
         .data(finalData)
         .join('circle')
-            .attr('fill', d => d.airbnb > 0 ? teal : orange)
+            .attr('fill', d => d.airbnb > 0 ? teal : 'none')
+            .attr('stroke', d => d.airbnb > 0 ? 'none' : teal)
             .attr('margin-left', 100)
-            .attr('r', 3)
+            .attr('r', 4)
             .attr('cx', d => map_0_xScale(d.mapX))
             .attr('cy', d => map_0_yScale(d.mapY))
 
@@ -568,31 +569,139 @@ function drawInitial(){
     
     // ANNOTATIONS
     // points to annotate
+
+    // airbnbs graph
+    const salou = finalData.filter(d => d.municipality == 'Salou')
+    const salou_pop = popScale_noBCN(salou[0].population)
+    const salou_air = airbnbScale_noBCN(salou[0].airbnb)
+
+    const roses = finalData.filter(d => d.municipality == 'Roses')
+    const roses_pop = popScale_noBCN(roses[0].population)
+    const roses_air = airbnbScale_noBCN(roses[0].airbnb)
+
+    const lloret = finalData.filter(d => d.municipality == 'Lloret de Mar')
+    const lloret_pop = popScale_noBCN(lloret[0].population)
+    const lloret_air = airbnbScale_noBCN(lloret[0].airbnb)
+
+    // percent graph
     const begur = finalData.filter(d => d.municipality == 'Begur')
     const begur_pop = popScale_noBCN(begur[0].population)
     const begur_perAir = airbnbPerScale(begur[0].perc_Airbnb)
 
+    const pals = finalData.filter(d => d.municipality == 'Pals')
+    const pals_pop = popScale_noBCN(pals[0].population)
+    const pals_perAir = airbnbPerScale(pals[0].perc_Airbnb)
+
+
     // create annotation details
+    const ann_radius = 10
+    const ann_padding = 3
+
+    annotation_salou = [{
+        note: {
+            title: 'Salou'
+        },
+        x: salou_pop,
+        y: salou_air,
+        dy: -25,
+        dx: 40,
+        subject: { radius: ann_radius, radiusPadding: ann_padding }
+    }]
+
+    annotation_roses = [{
+        note: {
+            title: 'Roses'
+        },
+        x: roses_pop,
+        y: roses_air,
+        dy: 40,
+        dx: 40,
+        subject: { radius: ann_radius, radiusPadding: ann_padding }
+    }]
+
+    annotation_lloret = [{
+        note: {
+            title: 'Lloret de Mar'
+        },
+        x: lloret_pop,
+        y: lloret_air,
+        dy: -25,
+        dx: 40,
+        subject: { radius: ann_radius, radiusPadding: ann_padding }
+    }]
+
     annotation_begur = [{
         note: {
             title: 'Begur'
         },
         x: begur_pop,
         y: begur_perAir,
-        dy: 50,
-        dx: 50,
-        subject: { radius: 10, radiusPadding: 10 }
+        dy: 30,
+        dx: 45,
+        subject: { radius: ann_radius, radiusPadding: ann_padding }
+    }]
+
+    annotation_pals = [{
+        note: {
+            title: 'Pals'
+        },
+        x: pals_pop,
+        y: pals_perAir,
+        dy: 40,
+        dx: 40,
+        subject: { radius: ann_radius, radiusPadding: ann_padding }
     }]
 
     // make the annotations
+    // airbnbs
+    // salou
+    makeAnnotation_salou = d3.annotation()
+                             .annotations(annotation_salou)
+                             .type(d3.annotationCalloutCircle)
+
+    svg.append('g')
+        .attr('opacity', 0)
+        .attr('class', 'annotation_airbnbs')
+        .call(makeAnnotation_salou)
+    // roses
+    makeAnnotation_roses = d3.annotation()
+                             .annotations(annotation_roses)
+                             .type(d3.annotationCalloutCircle)
+
+    svg.append('g')
+        .attr('opacity', 0)
+        .attr('class', 'annotation_airbnbs')
+        .call(makeAnnotation_roses)
+    //loret
+    makeAnnotation_lloret = d3.annotation()
+                             .annotations(annotation_lloret)
+                             .type(d3.annotationCalloutCircle)
+
+    svg.append('g')
+        .attr('opacity', 0)
+        .attr('class', 'annotation_airbnbs')
+        .call(makeAnnotation_lloret)
+
+    // percent graph
+    // begur
     makeAnnotation_begur = d3.annotation()
-                            .annotations(annotation_begur)
+                             .annotations(annotation_begur)
+                             .type(d3.annotationCalloutCircle)
+
+    svg.append('g')
+        .attr('opacity', 0)
+        .attr('class', 'annotation_perc')
+        .call(makeAnnotation_begur)
+
+    // pals
+    makeAnnotation_pals = d3.annotation()
+                            .annotations(annotation_pals)
                             .type(d3.annotationCalloutCircle)
 
     svg.append('g')
         .attr('opacity', 0)
-        .attr('class', 'annotation_begur')
-        .call(makeAnnotation_begur)
+        .attr('class', 'annotation_perc')
+        .call(makeAnnotation_pals)
 
 }
 
@@ -624,12 +733,13 @@ function clean(chartType){
         // need popScale_noBCN and airbnbScale_noBCN
         svg.select('.airbnbAxis_noBCN').transition().attr('opacity', 0)
         svg.select('.popAxis').transition().attr('opacity', 0)
+        svg.selectAll('.annotation_airbnbs').transition().attr('opacity', 0)
     }
     if (chartType !== 'isDraw4') {
         // need popScale_noBCN, airbnbPerScale
         svg.select('.airbnbPerAxis').transition().attr('opacity', 0)
         svg.select('.popAxis_noBCN').transition().attr('opacity', 0)
-        svg.select('.annotation_begur').transition().attr('opacity', 0)
+        svg.selectAll('.annotation_perc').transition().attr('opacity', 0)
     }
     if (chartType !== 'isDraw5') {
         // need popAxis_noBCN, airbnbPerAxis
@@ -663,8 +773,10 @@ function draw0(){
     
     svg.selectAll('circle')
         .transition().duration(500).delay(100)
-        .attr('fill', d => d.airbnb > 0 ? teal : yellow)
-        .attr('r', 3)
+        .attr('fill', d => d.airbnb > 0 ? teal : 'none')
+        .attr('stroke', d => d.airbnb > 0 ? 'none' : teal)
+        .attr('stroke-width', 1)
+        // .attr('r', 3)
         .attr('cx', d => map_0_xScale(d.mapX))
         .attr('cy', d => map_0_yScale(d.mapY))
 
@@ -680,8 +792,17 @@ function draw1(){
     simulation.alpha(1).restart()
 
     svg.selectAll('circle')
-        .transition().duration(800).ease(d3.easeBack)
-
+        .transition().delay(2200)
+        .attr('fill', d => {
+            if(d.brand == 'Costa Brava' && d.airbnb > 0){ return yellow } 
+            if(d.brand !== 'Costa Brava' && d.airbnb > 0){ return teal } 
+            if(d.airbnb == 0){ return 'none' }
+        })
+        .attr('stroke', d => {
+            if(d.brand == 'Costa Brava' && d.airbnb == 0){ return yellow }
+            if(d.brand !== 'Costa Brava' && d.airbnb == 0){ return teal }
+            if(d.airbnb > 0){ return 'none' }
+        })
 }
 
 function draw2(){
@@ -712,6 +833,7 @@ function draw3(){
     // need popScale_noBCN and airbnbScale_noBCN
     svg.selectAll('.popAxis_noBCN').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
     svg.selectAll('.airbnbAxis_noBCN').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
+    svg.selectAll('.annotation_airbnbs').transition().attr('opacity', 1).delay(800)
 
     svg.selectAll('circle')
         .transition().duration(800).ease(d3.easeBack)
@@ -731,7 +853,7 @@ function draw4(){
     // need popScale_noBCN, airbnbPerScale
     svg.selectAll('.popAxis_noBCN').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
     svg.selectAll('.airbnbPerAxis').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
-    svg.select('.annotation_begur').transition().attr('opacity', 1).delay(800)
+    svg.selectAll('.annotation_perc').transition().attr('opacity', 1).delay(800)
 
     svg.selectAll('circle')
         .transition().duration(800).ease(d3.easeBack)
