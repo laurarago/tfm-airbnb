@@ -750,6 +750,10 @@ function clean(chartType){
         // no axes needed for the graph, but will need a legend of some kind
         svg.select('.perAirbnbLegend').attr('opacity', 0)
     }
+    if (chartType !== 'isDraw7') {
+        console.log('this is clean draw7')
+        // no axes needed for the graph, but will need a legend of some kind
+    }
 
 }
 
@@ -896,7 +900,12 @@ function draw6(){
         
     svg.selectAll('.perAirbnbLegend').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
 }
+function draw7(){
+    clean('isDraw7')
+    console.log('this is draw7')
 
+
+}
 
 // ************************** END ALL DRAW FUNCTIONS **************************//
 
@@ -914,7 +923,8 @@ let activationFunctions = [
     draw3,
     draw4,
     draw5,
-    draw6 
+    draw6,
+    draw7
 ]
 
 //All the scrolling function
@@ -931,7 +941,7 @@ scroll.on('active', function(index){
 
     d3.selectAll('.step')
         .transition().duration(500)
-        .style('opacity', function (d, i) {return i === index ? 1 : 0.1;});
+        .style('opacity', function (d, i) {return i === index ? 1 : 0;});
     
     activeIndex = index
     let sign = (activeIndex - lastIndex) < 0 ? -1 : 1; 

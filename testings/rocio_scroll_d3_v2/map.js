@@ -1,83 +1,3 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <script src = 'https://d3js.org/d3.v6.min.js'></script>
-    <script src = 'https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js'></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/1.3.4/chroma.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.5.1/d3-annotation.min.js"></script>
-    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.3.1/mapbox-gl.js"></script>
-    <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.3.1/mapbox-gl.css" rel="stylesheet" />
-    <script src="https://unpkg.com/intersection-observer@0.5.1/intersection-observer.js"></script>
-    <script type="text/javascript" src="https://aesqe.github.io/mapboxgl-minimap/mapboxgl-control-minimap.js"></script>
-    <script src="https://unpkg.com/scrollama"></script>
-    
-    <meta property='og:title' content='Catalonia: The land of touristic apartmentss'/>
-    <meta property='og:image' content='https://github.com/cuthchow/college-majors-visualisation/blob/master/preview.png'/>
-    <meta property='og:description' content='This interactive, scrollable data visualisation will take you on a journey through all of the different college majors in the United States, and compare how they stack up in terms of median graduate salary, gender ratios, employability, and other factors. '/>
-    <meta property='og:url' content='https://cuthchow.github.io/college-majors-visualisation/'/>
-
-
-
-    <title>Catalonia: The land of tourists</title>
-</head>
-
-
-<body>
-    <div class="intro">
-    <h1>Catalonia: The land of tourists</h1></div>
-
-     <main>
-    <div id="graphic">
-        <div id="sections">
-             <section class="step">                
-            </section>
-            <section class="step">
-                <div class="box">
-                    <p>The 91% of the municipalities in Catalonia have at least one turistic appartment announced in  airbnb</p>
-                </div>  
-            </section>
-            <section class="step">
-                <div class="box">
-                    <p>The municipalities without airbnb’s have all less than 3.000 inhabitants and the most part of them are located in Lleida</p>
-                </div>
-            </section>
-            <section class = 'step'>
-                <div class="box">
-                    <p>Without Barcelona, the cities of Salou, Roses and Lloret de Mar are the ones with more turistic apartments on airbnb. All of them are specialized in drunken and mass tourism</p>
-                </div>
-            </section>
-            <section class="step">
-                <div class="box">
-                    <p>Without Barcelona, the cities of Salou, Roses and Lloret de Mar are the ones with more turistic apartments on airbnb. All of them are specialized in drunken and mass tourism</p>
-                </div>
-            </section>
-            <section class="step">
-                <div class="box">
-                    <p>Without Barcelona, the cities of Salou, Roses and Lloret de Mar are the ones with more turistic apartments on airbnb. All of them are specialized in drunken and mass tourism</p>
-                </div>
-                 
-            </section>
-            <section class="step">
-                <div class="box">
-                    <p>Without Barcelona, the cities of Salou, Roses and Lloret de Mar are the ones with more turistic apartments on airbnb. All of them are specialized in drunken and mass tourism</p>
-                </div>
-                <svg id = 'legend' width = '400px' height = '500px'></svg>
-            </section>
-            <section class="step">
-                <div id="map"></div>
-                <div id="story"></div>
-                    <script src="./config.js"></script>
-            </section>
-        </div>
-        <div id="vis"></div>
-        </div>
-    </main>   
-
-    </div>
-
-    <script>
     var layerTypes = {
         'fill': ['fill-opacity'],
         'line': ['line-opacity'],
@@ -159,7 +79,7 @@
         }
     
         container.setAttribute('id', record.id);
-        container.classList.add('step1');
+        container.classList.add('step');
         if (idx === 0) {
             container.classList.add('active');
         }
@@ -213,7 +133,7 @@
     }
     
     // instantiate the scrollama
-    var scroller1 = scrollama();
+    var scroller = scrollama();
     
     map.on("load", function() {
         map.addSource("airbnb", {
@@ -321,9 +241,9 @@
             }), 'bottom-right');
     
         // setup the instance, pass callback functions
-        scroller1
+        scroller
         .setup({
-            step: '.step1',
+            step: '.step',
             offset: 0.5,
             progress: true
         })
@@ -348,16 +268,6 @@
     });
     
     // setup resize event
-    window.addEventListener('resize', scroller1.resize);
-    
-    </script>
-
+    window.addEventListener('resize', scroller.resize);
 
     
-
-    
-    <script src = 'scroller.js'></script>
-    <script src = 'sections.js'></script>
-
-</body>
-</html>
