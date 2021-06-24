@@ -832,6 +832,8 @@ function draw05(){
 
     svg.selectAll('circle')
         .transition().duration(800).ease(d3.easeBack)
+        .attr('fill', d => d.airbnb > 0 ? teal : 'none')
+        .attr('stroke', d => d.airbnb > 0 ? 'none' : teal)
     
     svg.selectAll('.chunkLabels').transition().attr('opacity', 1)
 
