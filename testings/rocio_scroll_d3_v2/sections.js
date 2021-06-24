@@ -3,7 +3,7 @@ let popAxis, popAxis_noBCN, airbnbAxis, airbnbAxis_noBCN, airbnbPerAxis
 let airbnbScale, airbnbPerScale, popScale, popScale_noBCN, airbnbScale_r
 let blue, yellow, teal, orange, newblue, pink
 let simulation, nodes
-let airbnbPerLegend
+let airbnbPerLegend, sizeLegend
 let fillScale, square
 let bar_start_points, start_x
 
@@ -103,154 +103,154 @@ function createScales(){
     fillScale = d3.scaleSequential(chroma.scale(['#fff', teal, newblue]))
 }
 
-function legend({
-    color,
-    title,
-    tickSize = 6,
-    width = 320,
-    height = 44 + tickSize,
-    marginTop = 18,
-    marginRight = 0,
-    marginBottom = 16 + tickSize,
-    marginLeft = 0,
-    ticks = width / 64,
-    tickFormat,
-    tickValues
-  } = {}) {
-    const svg = d3.select("svg")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("viewBox", [0, 0, width, height])
-      .style("overflow", "visible")
-      .style("display", "block");
+// function legend({
+//     color,
+//     title,
+//     tickSize = 6,
+//     width = 320,
+//     height = 44 + tickSize,
+//     marginTop = 18,
+//     marginRight = 0,
+//     marginBottom = 16 + tickSize,
+//     marginLeft = 0,
+//     ticks = width / 64,
+//     tickFormat,
+//     tickValues
+//   } = {}) {
+//     const svg = d3.select("svg")
+//       .attr("width", width)
+//       .attr("height", height)
+//       .attr("viewBox", [0, 0, width, height])
+//       .style("overflow", "visible")
+//       .style("display", "block");
   
-    let tickAdjust = g => g.selectAll(".tick line").attr("y1", marginTop + marginBottom - height);
-    let x;
+//     let tickAdjust = g => g.selectAll(".tick line").attr("y1", marginTop + marginBottom - height);
+//     let x;
   
-    // Continuous
-    if (color.interpolate) {
-      const n = Math.min(color.domain().length, color.range().length);
+//     // Continuous
+//     if (color.interpolate) {
+//       const n = Math.min(color.domain().length, color.range().length);
   
-      x = color.copy().rangeRound(d3.quantize(d3.interpolate(marginLeft, width - marginRight), n));
+//       x = color.copy().rangeRound(d3.quantize(d3.interpolate(marginLeft, width - marginRight), n));
   
-      svg.append("image")
-        .attr("x", marginLeft)
-        .attr("y", marginTop)
-        .attr("width", width - marginLeft - marginRight)
-        .attr("height", height - marginTop - marginBottom)
-        .attr("preserveAspectRatio", "none")
-        .attr("xlink:href", ramp(color.copy().domain(d3.quantize(d3.interpolate(0, 1), n))).toDataURL());
-    }
+//       svg.append("image")
+//         .attr("x", marginLeft)
+//         .attr("y", marginTop)
+//         .attr("width", width - marginLeft - marginRight)
+//         .attr("height", height - marginTop - marginBottom)
+//         .attr("preserveAspectRatio", "none")
+//         .attr("xlink:href", ramp(color.copy().domain(d3.quantize(d3.interpolate(0, 1), n))).toDataURL());
+//     }
   
-    // Sequential
-    else if (color.interpolator) {
-      x = Object.assign(color.copy()
-        .interpolator(d3.interpolateRound(marginLeft, width - marginRight)), {
-          range() {
-            return [marginLeft, width - marginRight];
-          }
-        });
+//     // Sequential
+//     else if (color.interpolator) {
+//       x = Object.assign(color.copy()
+//         .interpolator(d3.interpolateRound(marginLeft, width - marginRight)), {
+//           range() {
+//             return [marginLeft, width - marginRight];
+//           }
+//         });
   
-      svg.append("image")
-        .attr("x", marginLeft)
-        .attr("y", marginTop)
-        .attr("width", width - marginLeft - marginRight)
-        .attr("height", height - marginTop - marginBottom)
-        .attr("preserveAspectRatio", "none")
-        .attr("xlink:href", ramp(color.interpolator()).toDataURL());
+//       svg.append("image")
+//         .attr("x", marginLeft)
+//         .attr("y", marginTop)
+//         .attr("width", width - marginLeft - marginRight)
+//         .attr("height", height - marginTop - marginBottom)
+//         .attr("preserveAspectRatio", "none")
+//         .attr("xlink:href", ramp(color.interpolator()).toDataURL());
   
-      // scaleSequentialQuantile doesn’t implement ticks or tickFormat.
-      if (!x.ticks) {
-        if (tickValues === undefined) {
-          const n = Math.round(ticks + 1);
-          tickValues = d3.range(n).map(i => d3.quantile(color.domain(), i / (n - 1)));
-        }
-        if (typeof tickFormat !== "function") {
-          tickFormat = d3.format(tickFormat === undefined ? ",f" : tickFormat);
-        }
-      }
-    }
+//       // scaleSequentialQuantile doesn’t implement ticks or tickFormat.
+//       if (!x.ticks) {
+//         if (tickValues === undefined) {
+//           const n = Math.round(ticks + 1);
+//           tickValues = d3.range(n).map(i => d3.quantile(color.domain(), i / (n - 1)));
+//         }
+//         if (typeof tickFormat !== "function") {
+//           tickFormat = d3.format(tickFormat === undefined ? ",f" : tickFormat);
+//         }
+//       }
+//     }
   
-    // Threshold
-    else if (color.invertExtent) {
-      const thresholds = color.thresholds ? color.thresholds() // scaleQuantize
-        :
-        color.quantiles ? color.quantiles() // scaleQuantile
-        :
-        color.domain(); // scaleThreshold
+//     // Threshold
+//     else if (color.invertExtent) {
+//       const thresholds = color.thresholds ? color.thresholds() // scaleQuantize
+//         :
+//         color.quantiles ? color.quantiles() // scaleQuantile
+//         :
+//         color.domain(); // scaleThreshold
   
-      const thresholdFormat = tickFormat === undefined ? d => d :
-        typeof tickFormat === "string" ? d3.format(tickFormat) :
-        tickFormat;
+//       const thresholdFormat = tickFormat === undefined ? d => d :
+//         typeof tickFormat === "string" ? d3.format(tickFormat) :
+//         tickFormat;
   
-      x = d3.scaleLinear()
-        .domain([-1, color.range().length - 1])
-        .rangeRound([marginLeft, width - marginRight]);
+//       x = d3.scaleLinear()
+//         .domain([-1, color.range().length - 1])
+//         .rangeRound([marginLeft, width - marginRight]);
   
-      svg.append("g")
-        .selectAll("rect")
-        .data(color.range())
-        .join("rect")
-        .attr("x", (d, i) => x(i - 1))
-        .attr("y", marginTop)
-        .attr("width", (d, i) => x(i) - x(i - 1))
-        .attr("height", height - marginTop - marginBottom)
-        .attr("fill", d => d);
+//       svg.append("g")
+//         .selectAll("rect")
+//         .data(color.range())
+//         .join("rect")
+//         .attr("x", (d, i) => x(i - 1))
+//         .attr("y", marginTop)
+//         .attr("width", (d, i) => x(i) - x(i - 1))
+//         .attr("height", height - marginTop - marginBottom)
+//         .attr("fill", d => d);
   
-      tickValues = d3.range(thresholds.length);
-      tickFormat = i => thresholdFormat(thresholds[i], i);
-    }
+//       tickValues = d3.range(thresholds.length);
+//       tickFormat = i => thresholdFormat(thresholds[i], i);
+//     }
   
-    // Ordinal
-    else {
-      x = d3.scaleBand()
-        .domain(color.domain())
-        .rangeRound([marginLeft, width - marginRight]);
+//     // Ordinal
+//     else {
+//       x = d3.scaleBand()
+//         .domain(color.domain())
+//         .rangeRound([marginLeft, width - marginRight]);
   
-      svg.append("g")
-        .selectAll("rect")
-        .data(color.domain())
-        .join("rect")
-        .attr("x", x)
-        .attr("y", marginTop)
-        .attr("width", Math.max(0, x.bandwidth() - 1))
-        .attr("height", height - marginTop - marginBottom)
-        .attr("fill", color);
+//       svg.append("g")
+//         .selectAll("rect")
+//         .data(color.domain())
+//         .join("rect")
+//         .attr("x", x)
+//         .attr("y", marginTop)
+//         .attr("width", Math.max(0, x.bandwidth() - 1))
+//         .attr("height", height - marginTop - marginBottom)
+//         .attr("fill", color);
   
-      tickAdjust = () => {};
-    }
+//       tickAdjust = () => {};
+//     }
   
-    svg.append("g")
-      .attr("transform", `translate(0,${height - marginBottom})`)
-      .call(d3.axisBottom(x)
-        .ticks(ticks, typeof tickFormat === "string" ? tickFormat : undefined)
-        .tickFormat(typeof tickFormat === "function" ? tickFormat : undefined)
-        .tickSize(tickSize)
-        .tickValues(tickValues))
-      .call(tickAdjust)
-      .call(g => g.select(".domain").remove())
-      .call(g => g.append("text")
-        .attr("x", marginLeft)
-        .attr("y", marginTop + marginBottom - height - 6)
-        .attr("fill", "currentColor")
-        .attr("text-anchor", "start")
-        .attr("font-weight", "bold")
-        .text(title));
+//     svg.append("g")
+//       .attr("transform", `translate(0,${height - marginBottom})`)
+//       .call(d3.axisBottom(x)
+//         .ticks(ticks, typeof tickFormat === "string" ? tickFormat : undefined)
+//         .tickFormat(typeof tickFormat === "function" ? tickFormat : undefined)
+//         .tickSize(tickSize)
+//         .tickValues(tickValues))
+//       .call(tickAdjust)
+//       .call(g => g.select(".domain").remove())
+//       .call(g => g.append("text")
+//         .attr("x", marginLeft)
+//         .attr("y", marginTop + marginBottom - height - 6)
+//         .attr("fill", "currentColor")
+//         .attr("text-anchor", "start")
+//         .attr("font-weight", "bold")
+//         .text(title));
   
-    return svg.node();
-  }
+//     return svg.node();
+//   }
   
-function ramp(color, n = 256) {
-    var canvas = document.createElement('canvas');
-    canvas.width = n;
-    canvas.height = 1;
-    const context = canvas.getContext("2d");
-    for (let i = 0; i < n; ++i) {
-      context.fillStyle = color(i / (n - 1));
-      context.fillRect(i, 0, 1, 1);
-    }
-    return canvas;
-}
+// function ramp(color, n = 256) {
+//     var canvas = document.createElement('canvas');
+//     canvas.width = n;
+//     canvas.height = 1;
+//     const context = canvas.getContext("2d");
+//     for (let i = 0; i < n; ++i) {
+//       context.fillStyle = color(i / (n - 1));
+//       context.fillRect(i, 0, 1, 1);
+//     }
+//     return canvas;
+// }
   
 
 // }
@@ -362,6 +362,24 @@ function setupGrid(grid_cols, bar_group, bar_label) {
 
         console.log(bar_start_points)
 }
+
+// function createSizeLegend() {
+//     let svg = d3.select("#legend")
+  
+    
+
+//     sizeLegend = d3.legendSize()
+//         .scale(airbnbScale_r.nice())
+//         .shape('circle')
+//         .shapePadding(15)
+//         .title('Percent Airbnbs')
+//         // .labelFormat(d3.format('%'))
+//         .cells(5)
+
+//         svg.append('g')
+//         .attr('class', 'sizeLegend')
+//         .attr('transform', `translate(600, 100)`)
+// }
       
 
 // **************************  END SET UP OTHER VARIABLES **************************//
@@ -418,7 +436,7 @@ function drawInitial(){
     // DRAW 0 - CATALONIA MAP - ADDING TO SVG
     // **************************************
     square = d3.symbol().type(d3.symbolSquare).size(width/3);
-
+    
     nodes = svg
         .selectAll('circle')
         .data(finalData)
@@ -469,7 +487,32 @@ function drawInitial(){
     //         .attr('stroke-width', 0)
     // }
 
+    // CREATE LEGENDS
+    // sizeLegend = d3.legendSize()
+    //     .scale(airbnbScale_r.nice())
+    //     .shape('circle')
+    //     .shapePadding(15)
+    //     .title('Percent Airbnbs')
+    //     // .labelFormat(d3.format('%'))
+    //     .cells(5)
+  
+    // svg.append('g')
+    //     .attr('class', 'sizeLegend')
+    //     .attr('opacity', 0)
+    //     .attr('transform', `translate(600, 100)`)
+    //     .call(sizeLegend)
 
+
+    // svg.append('g')
+    //     .attr('class', 'perAirbnbLegend')
+    //     .attr('opacity', 0)
+    //     .attr('transform', 'translate(500, 700)')
+    //     .append(() => legend({ 
+    //         color: fillScale, 
+    //         tickFormat: '%', 
+    //         title: 'Percent Airbnbs', 
+    //         width: 200
+    //     }))
 
     // CREATE ALL AXES — SET OPACITY TO 0
 
@@ -546,19 +589,7 @@ function drawInitial(){
             .attr('y', 25)
             .attr("text-anchor", "start")
             .attr('font-weight', 'bold')
-            .text('population'))
-
-    // LEGENDS
-    svg.append('g')
-        .attr('class', 'perAirbnbLegend')
-        .attr('opacity', 0)
-        .attr('transform', 'translate(500, 700)')
-        .append(() => legend({ 
-            color: fillScale, 
-            tickFormat: '%', 
-            title: 'Percent Airbnbs', 
-            width: 200
-        }))
+            .text('population'))    
 
     // LABELS FOR FORCE BAR GRAPHS
     const chunk_label_data = [
@@ -601,6 +632,10 @@ function drawInitial(){
 
     // ANNOTATIONS
     // points to annotate
+    // barcelona outlier graph
+    const bcn = finalData.filter(d => d.municipality == 'Barcelona')
+    const bcn_pop = popScale(bcn[0].population)
+    const bcn_air = airbnbScale(bcn[0].airbnb)
 
     // airbnbs graph
     const salou = finalData.filter(d => d.municipality == 'Salou')
@@ -628,6 +663,17 @@ function drawInitial(){
     // create annotation details
     const ann_radius = 10
     const ann_padding = 3
+
+    annotation_bcn = [{
+        note: {
+            title: 'Barcelona'
+        },
+        x: bcn_pop,
+        y: bcn_air,
+        dy: 30,
+        dx: -40,
+        subject: { radius: ann_radius, radiusPadding: ann_padding }
+    }]
 
     annotation_salou = [{
         note: {
@@ -685,6 +731,15 @@ function drawInitial(){
     }]
 
     // make the annotations
+    makeAnnotation_bcn = d3.annotation()
+                             .annotations(annotation_bcn)
+                             .type(d3.annotationCalloutCircle)
+
+    svg.append('g')
+        .attr('opacity', 0)
+        .attr('class', 'annotation_bcn')
+        .call(makeAnnotation_bcn)
+
     // airbnbs
     // salou
     makeAnnotation_salou = d3.annotation()
@@ -763,6 +818,7 @@ function clean(chartType){
         // need popAxis and airbnbAxis
         svg.select('.airbnbAxis').transition().attr('opacity', 0)
         svg.select('.popAxis').transition().attr('opacity', 0)
+        svg.selectAll('.annotation_bcn').transition().attr('opacity', 0)
     }
     if (chartType !== 'isDraw3') {
         // need popScale_noBCN and airbnbScale_noBCN
@@ -782,7 +838,7 @@ function clean(chartType){
         svg.select('.popAxis_noBCN').transition().attr('opacity', 0)
     }
     if (chartType !== 'isDraw6') {
-        svg.select('.perAirbnbLegend').attr('opacity', 0)
+        // svg.select('.sizeLegend').attr('opacity', 0)
     }
     if (chartType !== 'isDraw7') {
         // no axes needed for the graph, but will need a legend of some kind
@@ -883,12 +939,13 @@ function draw2(){
     // need popAxis and airbnbAxis
     svg.selectAll('.popAxis').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
     svg.selectAll('.airbnbAxis').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
+    svg.selectAll('.annotation_bcn').transition().attr('opacity', 1).delay(800)
     
     svg.selectAll('circle')
         .transition().duration(800).ease(d3.easeBack)
         .attr('cx', d => popScale(d.population))
         .attr('cy', d => airbnbScale(d.airbnb))
-        // .attr('r', 5)
+        .attr('r', 4)
         .attr('fill', teal)
         .attr('opacity', 0.7)
         
@@ -908,7 +965,7 @@ function draw3(){
         .transition().duration(800).ease(d3.easeBack)
         .attr('cx', d => popScale_noBCN(d.population))
         .attr('cy', d => airbnbScale_noBCN(d.airbnb))
-        // .attr('r', 5)
+        .attr('r', 4)
         .attr('fill', d => d.municipality == 'Barcelona' ? 'none' : teal)
         .attr('opacity', 0.7)
         
@@ -928,7 +985,7 @@ function draw4(){
         .transition().duration(800).ease(d3.easeBack)
         .attr('cx', d => popScale_noBCN(d.population))
         .attr('cy', d => airbnbPerScale(d.perc_Airbnb))
-        // .attr('r', 5)
+        .attr('r', 4)
         .attr('fill', d => {if (d.municipality == 'Barcelona' || isNaN(d.perc_Airbnb)){ return 'none'} else { return teal }})
         .attr('opacity', 0.7)
 
@@ -946,8 +1003,11 @@ function draw5(){
         .transition().duration(800).ease(d3.easeBack)
         .attr('cx', d => popScale_noBCN(d.population))
         .attr('cy', d => airbnbPerScale(d.perc_Airbnb))
-        // .attr('r', 5)
-        .attr('fill', d => {if (d.brand == 'Costa Brava'){ return yellow } if (d.municipality == 'Barcelona' || isNaN(d.perc_Airbnb)){ return 'none' } else { return teal }})
+        .attr('r', d => d.perc_Airbnb ? 4 : 0)
+        .attr('fill', d => {
+            if (d.brand == 'Costa Brava'){ return yellow } 
+            if (d.municipality == 'Barcelona' || isNaN(d.perc_Airbnb)){ return 'none' } 
+            else { return teal }})
         .attr('opacity', 0.7)
 }
 
@@ -955,13 +1015,17 @@ function draw6(){
     let svg = d3.select('#vis').select('svg')
     clean('isDraw6')
 
+    // svg.selectAll('.sizeLegend').transition().delay(500).attr('opacity', 1)
+
     svg.selectAll('circle')
-        .transition().duration(800)
-        .attr('fill', d => d.perc_Airbnb > 50 ? pink : teal )
-        .attr('r', d => airbnbScale_r(d.perc_Airbnb))
+        .transition().duration(800).ease(d3.easeBack)
+        .attr('fill', teal)
+        .attr('r', d => d.perc_Airbnb ? airbnbScale_r(d.perc_Airbnb) : 0)
         .attr('cx', d => map_0_xScale(d.mapX))
         .attr('cy', d => map_0_yScale(d.mapY))
         .style('mix-blend-mode', 'multiply')
+
+    // createSizeLegend()
 
     // svg.selectAll('circle')
     //     .transition().duration(800).delay(100)
