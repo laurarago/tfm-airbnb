@@ -1,12 +1,11 @@
 let svg, points, grid, finalData, finalData_noBCN
 let popAxis, popAxis_noBCN, airbnbAxis, airbnbAxis_noBCN, airbnbPerAxis
-let airbnbScale, airbnbPerScale, popScale, popScale_noBCN
-let blue, yellow, teal, orange, newblue
+let airbnbScale, airbnbPerScale, popScale, popScale_noBCN, airbnbScale_r
+let blue, yellow, teal, orange, newblue, pink
 let simulation, nodes
 let airbnbPerLegend
 let fillScale, square
-let annotation1
-let makeAnnotation1
+let bar_start_points, start_x
 
 const margin = {left: 140, top: 125, bottom: 35, right: 20}
 const width = 850 - margin.left - margin.right
@@ -42,13 +41,14 @@ d3.csv('data/RealData.csv', function(d){
         population: +d.Population,
         perc_Airbnb: +d.perc_AirbnbOk,
         airbnb: +d.airbnb,
-        brandCode: brandCodes[d.brand]
+        brandCode: brandCodes[d.brand],
+        chunk: d.airbnb > 0 ? 0 : 1
     };
 }).then(data => {
     finalData = data
     // console.log(finalData)
     createScales()
-    setupGrid()
+    // setupGrid()
     setTimeout(drawInitial(), 100)
 })
 
@@ -84,6 +84,10 @@ function createScales(){
     airbnbPerScale = d3.scaleLinear() // this is a y axis
         .domain(d3.extent(finalData, d => d.perc_Airbnb)).nice()
         .range([height - margin.bottom, margin.top])
+    
+    airbnbScale_r = d3.scaleSqrt()
+        .domain([0, d3.max(finalData, d => d.perc_Airbnb)])
+        .range([1, 20])
 
     // COLOR STUFF
     blue = '#7bd2ed'
@@ -91,6 +95,7 @@ function createScales(){
     teal = '#29DDC7'
     orange = '#FF852F'
     newblue = '#3B78E0'
+    pink = '#FF047D'
 
     // fillScale = d3.scaleSequential(d3.interpolatePuBu)
     //fillScale = d3.scaleSequential(d3.interpolateGnBu)
@@ -248,43 +253,25 @@ function ramp(color, n = 256) {
 }
   
 
-// function createLegend(x, y){
-//     let svg = d3.select('#legend')
-
-//     console.log('this is createLegend')
-
-//     svg.append('g')
-//         .attr('class', 'airbnbPerLegend')
-//         .attr('transform', `translate(${x},${y})`)
-
-//     airbnbPerLegend = d3.legendColor()
-//                         .shape('path', d3.symbol().type(d3.symbolCircle).size(150)())
-//                         .shapePadding(10)
-//                         .scale(fillScale)
-    
-//     d3.select('.airbnbPerLegend')
-//         .call(airbnbPerLegend)
-// }
-
 // }
 // **************************  END DECLARATION VARS LEGENDS AND SCALES **************************//
 
 // **************************  SET UP OTHER VARIABLES **************************//
 
     // FOR 'BAR CHART'
-function setupGrid() {    
+function setupGrid(grid_cols, bar_group, bar_label) {    
         const GRID_SIZE = 15; // controls how much space there is between each square
-        const GRID_COLS = 4;
-
+        let GRID_COLS = grid_cols;
+        
         let data_structure = {
-            bars : [...new Set(finalData.map(d => d.brandCode))],
-            bar_names: [...new Set(finalData.map(d => d.brand))],
+            bars : [...new Set(finalData.map(d => d[bar_group]))],
+            bar_names: [...new Set(finalData.map(d => d[bar_label]))],
             bar_counts : [],
             bar_rows : []
         }
         
         for (var i = 0; i < data_structure.bars.length; i++) {
-            data_structure.bar_counts[i] = finalData.map(d => d.brandCode).reduce(function(n, val) {
+            data_structure.bar_counts[i] = finalData.map(d => d[bar_group]).reduce(function(n, val) {
                 return n + (val === data_structure.bars[i]);
             }, 0);
             data_structure.bar_rows[i] = Math.ceil(data_structure.bar_counts[i] / GRID_COLS);
@@ -310,6 +297,9 @@ function setupGrid() {
 
         // grid.init();
 
+        bar_start_points = []
+        // start_x = 0
+
         const GRID_ROWS = Math.ceil(finalData.length / GRID_COLS);    
             
         grid = {
@@ -323,8 +313,9 @@ function setupGrid() {
                 this.cells[bar] = [];
                 let bar_cells = [];
                 let cells_count = data_structure.bar_counts[bar];
-                        
-                let start_x = bar * (GRID_COLS+1) * GRID_SIZE;
+                  
+                start_x = bar * (GRID_COLS+1) * GRID_SIZE;
+                bar_start_points.push(start_x)
                     
                 for(var r = 0; r < GRID_ROWS; r++) {
                 for(var c = 0; c < GRID_COLS; c++) {
@@ -352,7 +343,7 @@ function setupGrid() {
 
             occupyNearest : function(p) {
             // if (p.group != 0) return null; 
-            let bar_i = data_structure.bars.indexOf(p.brandCode);
+            let bar_i = data_structure.bars.indexOf(p[bar_group]);
             var minDist = 1000000;
             var d;
             var candidate = null;
@@ -369,8 +360,7 @@ function setupGrid() {
             }
         }
 
-        // points = finalData.map(d => Object.create(d));
-
+        console.log(bar_start_points)
 }
       
 
@@ -401,6 +391,9 @@ function drawInitial(){
     simulation = d3.forceSimulation(finalData)
 
     simulation.on('tick', () => {
+
+        // setupGrid(grid_cols = grid_cols_input, bar_group = bar_group_input, bar_label = bar_label_input)
+
         grid.init();
             
         nodes
@@ -418,7 +411,7 @@ function drawInitial(){
                 })
             .attr("cx", d => d.x)
             .attr("cy", d => d.y)
-        });
+    });
 
     simulation.stop()
 
@@ -566,7 +559,46 @@ function drawInitial(){
             title: 'Percent Airbnbs', 
             width: 200
         }))
+
+    // LABELS FOR FORCE BAR GRAPHS
+    const chunk_label_data = [
+        {'name': 'Airbnbs', 'start': 0},
+        {'name': 'No Airbnbs', 'start': 465}
+    ]
+
+    const brand_label_data = [
+        {'name': 'Costa Brava', 'start': 0},
+        {'name': 'Costa Barcelona', 'start': 105},
+        {'name': 'Pirineus', 'start': 210},
+        {'name': 'Terres de Lleida', 'start': 315},
+        {'name': 'Costa Daurada', 'start': 420},
+        {'name': 'Paisatges de Barcelona', 'start': 525},
+        {'name': "Terres de l'Ebre", 'start': 630},
+        {'name': "Val d'Aran", 'start': 735},
+        {'name': "Barcelona", 'start': 840}
+    ]
+
+    svg.append('g')
+        .attr('opacity', 0)
+        .attr('class', 'chunkLabels')
+        .selectAll('text')
+            .data(chunk_label_data)
+            .join('text')
+            .attr('x', d => d.start + 60)
+            .attr('y', height - margin.bottom - 75)
+            .text(d => d.name)
+
+    svg.append('g')
+        .attr('class', 'brandLabels')
+        .attr('opacity', 0)
+        .selectAll('text')
+            .data(brand_label_data)
+            .join('text')
+            .attr('x', d => d.start + 27)
+            .attr('y', height - margin.bottom - 90)
+            .text(d => d.name)
     
+
     // ANNOTATIONS
     // points to annotate
 
@@ -721,8 +753,11 @@ function clean(chartType){
     if (chartType !== 'isDraw0') {
         // no axes needed for the graph, but will need a legend of some kind
     }
+    if (chartType !== 'isDraw05') {
+        svg.selectAll('.chunkLabels').transition().attr('opacity', 0)
+    }
     if (chartType !== 'isDraw1') {
-        // no axes needed for the graph, but will need a legend of some kind
+        svg.selectAll('.brandLabels').transition().attr('opacity', 0)
     }
     if (chartType !== 'isDraw2') {
         // need popAxis and airbnbAxis
@@ -747,11 +782,9 @@ function clean(chartType){
         svg.select('.popAxis_noBCN').transition().attr('opacity', 0)
     }
     if (chartType !== 'isDraw6') {
-        // no axes needed for the graph, but will need a legend of some kind
         svg.select('.perAirbnbLegend').attr('opacity', 0)
     }
     if (chartType !== 'isDraw7') {
-        console.log('this is clean draw7')
         // no axes needed for the graph, but will need a legend of some kind
     }
 
@@ -786,9 +819,34 @@ function draw0(){
 
 }
 
+function draw05(){
+    let svg = d3.select("#vis").select('svg')
+    clean('isDraw05')
+
+    setupGrid(grid_cols = 30, bar_group = 'chunk', bar_label = 'chunk')
+
+    simulation
+        .force("center", d3.forceCenter(width / 2, height / 2))
+    
+    simulation.alpha(1).restart()
+
+    svg.selectAll('circle')
+        .transition().duration(800).ease(d3.easeBack)
+    
+    svg.selectAll('.chunkLabels').transition().attr('opacity', 1)
+
+}
+
 function draw1(){
     let svg = d3.select("#vis").select('svg')
     clean('isDraw1')
+
+    setupGrid(grid_cols = 6, bar_group = 'brandCode', bar_label = 'brand')
+    // grid_cols_input = 6
+    // bar_group_input = 'brandCode'
+    // bar_label_input = 'brand'
+
+    // setupGrid(grid_cols = grid_cols_input, bar_group = bar_group_input, bar_label = bar_label_input)
 
     simulation
         .force("center", d3.forceCenter(width / 2, height / 2))
@@ -807,6 +865,11 @@ function draw1(){
             if(d.brand !== 'Costa Brava' && d.airbnb == 0){ return teal }
             if(d.airbnb > 0){ return 'none' }
         })
+    
+    svg.selectAll('.brandLabels')
+        .transition()
+        .attr('opacity', 1)
+
 }
 
 function draw2(){
@@ -891,19 +954,26 @@ function draw6(){
     clean('isDraw6')
 
     svg.selectAll('circle')
-        .transition().duration(800).delay(100)
-        .attr('fill', d => d.perc_Airbnb ? fillScale(d.perc_Airbnb) : 'none')
-        // .attr('r', 3)
+        .transition().duration(800)
+        .attr('fill', d => d.perc_Airbnb > 50 ? pink : teal )
+        .attr('r', d => airbnbScale_r(d.perc_Airbnb))
         .attr('cx', d => map_0_xScale(d.mapX))
         .attr('cy', d => map_0_yScale(d.mapY))
+        .style('mix-blend-mode', 'multiply')
+
+    // svg.selectAll('circle')
+    //     .transition().duration(800).delay(100)
+    //     .attr('fill', d => d.perc_Airbnb ? fillScale(d.perc_Airbnb) : 'none')
+    //     // .attr('r', 3)
+    //     .attr('cx', d => map_0_xScale(d.mapX))
+    //     .attr('cy', d => map_0_yScale(d.mapY))
 
         
-    svg.selectAll('.perAirbnbLegend').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
+    // svg.selectAll('.perAirbnbLegend').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
+
 }
 function draw7(){
     clean('isDraw7')
-    console.log('this is draw7')
-
 
 }
 
@@ -918,6 +988,7 @@ function draw7(){
 
 let activationFunctions = [
     draw0,
+    draw05,
     draw1,
     draw2,
     draw3,
