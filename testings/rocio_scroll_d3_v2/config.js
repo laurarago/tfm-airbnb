@@ -12,7 +12,7 @@ var config = {
       id: 'Start',
       title: 'A journey through Catalonia conquered by Airbnb',
       image: '',
-      description: 'The Airbnb tourist rental platform offers up to <span style="background-color: #29DDC7">73,800 apartments</span> throughout the Catalan territory. Swipe down to see how they are distributed and learn more about the tourist stress suffered by some of the towns'
+      description: 'The Airbnb tourist rental platform has roughly <span style="background-color: #29DDC7">73,800 apartments</span> across Catalonia. Swipe down to see how they are distributed and learn more about the stress tourism puts on some Catalan towns.'
     ,
       location: {
         center: { lon: 1.35692, lat: 42.13644 },
@@ -32,9 +32,9 @@ var config = {
     },
     {
       id: 'CostaBrava',
-      title: 'Costa Brava gathers the most densest area of Airbnb',
+      title: 'Costa Brava has the highest concentration of Airbnbs',
       image: '',
-      description: '<span style="background-color: #FFD208"><b>Costa Brava</b> is the tourist brand</span> that concentrates a greater number of these advertisements. 98% of the municipalities have at least one apartment. And nine of the 10 locations with the highest percentage of Airbnb are in this area.',
+      description: '<span style="background-color: #FFD208"><b>Costa Brava</b> is the tourist brand</span> with the greatest number of tourist rentals. Around 98% of the municipalities have at least one apartment listed, and nine of the 10 locations with the highest percentage of Airbnbs are in this region.',
       location: {
         center: { lon: 2.97687, lat: 42.02785 },
         zoom: 9.53,
@@ -56,7 +56,7 @@ var config = {
       id: 'Roses',
       title: `Roses: the Airbnb paradise in L'Empordà`,
       image: '',
-      description: 'Of all of them, Roses is the one with the largest number of Airbnb apartments. Most are concentrated in the old town and in the Santa Margarida urbanization and near the Almadrava beach.',
+      description: 'Of all the municipalities, Roses is the one with the largest total number of Airbnb listings. Most are concentrated in the old town and in the Santa Margarida area, as well as near the Almadrava beach.',
       location: {
         center: { lon: 3.18551, lat: 42.28491 },
         zoom: 12.05,
@@ -83,7 +83,7 @@ var config = {
       id: 'Roses',
       title: '',
       image: 'https://imagenes.cosasdebarcos.com/amarres/8/1/8/2/amarre-venta-65711060180969535353505449484569x.jpg',
-      description: 'While Santa Margarida (picture above) is known for its tall towers of tourist apartments, the Canyelles and Almadrava area are characterized by houses with swimming pools and summer chalets.'
+      description: 'While Santa Margarida (picture above) is known for its tall towers of tourist apartments, the Canyelles and Almadrava areas are characterized by houses with swimming pools and summer chalets.'
       ,
       location: {
         center: { lon: 3.18551, lat: 42.28491 },
@@ -109,9 +109,9 @@ var config = {
     },
     {
       id: 'Begur',
-      title: 'Begur has more ads on Airnbnb than real homes in the town',
+      title: 'Begur, the empire of Airbnb in Costa Brava',
       image: '',
-      description: 'According to data from the INE, there are <b>1,680 houses</b> in the entire municipality, while there are up to <b>2,088 different apartments</b> on airbnb.Although it is very likely that this mismatch is due to the fact that part of the apartments are rented by rooms, this fact is a good indicator of how tourism prevails in certain areas',
+      description: 'This beautiful town, famous for its coves, has 935 Airbnb apartments: that’s <b>55.5% of all the houses</b>, according to Idescat data. Although it is very likely that this mismatch is due to the fact that some listings are for rooms inside apartments or houses, this statistic is still a good indicator of how much tourism dominates this area.      ',
       location: {
         center: { lon: 3.16966, lat: 41.95200 },
         zoom: 11.40,
@@ -128,16 +128,16 @@ var config = {
       onChapterExit: [{
         layer: 'airbnb-brand',
         opacity: 0,
-      },,{
+      },{
         layer: 'Begur',
         opacity: 0
       }]
     },
     {
       id: 'Costa Daurada',
-      title: 'Costa Daurada, an area stressed area by tourism',
-      image: './path/to/image/source.png',
-      description: 'Copy these sections to add to your story.',
+      title: 'Costa Daurada, the second area stressed by tourism',
+      image: '',
+      description: 'Sun, large beaches, and fine sand attract a lot of tourists. Salou (2,419 listings), Cambrils (1,470) and Mont-Roig del Camp (1,190) take the top three spots in the region. The density of these tourist apartments is high as well, but a bit less than Costa Brava.',
       location: {
         center: { lon: 1.11232, lat: 41.10637 },
         zoom: 9.96,
@@ -156,34 +156,13 @@ var config = {
    }]
   },
   {
-    id: 'Salou',
-    title: 'This city of Salou is the one that better represnts this phenomena',
-    image: './path/to/image/source.png',
-    description: 'Copy these sections to add to your story.',
-    location: {
-      center: { lon: 1.12798, lat: 41.08047 },
-      zoom: 12.96,
-      pitch: 42.00,
-      bearing: 12.00
-    },
-    onChapterEnter: [ {
-      layer: 'airbnb-fill',
-      opacity: 0.7,
-    }],
-    onChapterExit: [{
-      layer: 'airbnb-fill',
-      opacity: 0,
-
- }]
-},
-  {
     id: 'Naut Aran',
-    title: 'Naut Aran is an exceptions in the middle of the pyrinees and the second one with a higher percentatge of airbnb',
-    image: './path/to/image/source.png',
-    description: 'Copy these sections to add to your story.',
+    title: 'Naut Aran, the Pyrenees Gaulish',
+    image: '',
+    description: 'Beaches aren’t the only attraction in Catalonia. For skiing or trekking, Val d’Aran is a paradise for those who prefer a backpack to a swimsuit. Here, Naut Aran has the <b>highest percentage of Airbnb’s</b> at 66% (494 tourist apartments).',
     location: {
       center: { lon: 0.90358, lat: 42.71372 },
-      zoom: 11.27,
+      zoom: 10.27,
       pitch: 18.50,
       bearing: 0.00
     },
@@ -191,17 +170,22 @@ var config = {
       layer: 'airbnb-fill',
       opacity: 0.7,
 
- }],
+    },{
+      layer: 'NautAran',
+      opacity: 0.5
+    }],
     onChapterExit: [{
       layer: 'airbnb-fill',
-      opacity: 0,
-
- }]
+      opacity: 0
+    },{
+  layer: 'NautAran',
+  opacity: 0}
+]
   },
   {
     id: 'Barcelona',
     title: 'But Barcelona is the worst',
-    image: './path/to/image/source.png',
+    image: '',
     description: 'Copy these sections to add to your story.',
     location: {
       center: { lon: 2.12195, lat: 41.41609 },
@@ -222,9 +206,9 @@ bearing: -46.40
   },
   {
     id: 'Lleida',
-    title: 'But Barcelona is the worst',
-    image: './path/to/image/source.png',
-    description: 'Copy these sections to add to your story.',
+    title: 'No Airbnb and no tourism',
+    image: '',
+    description: 'Terres de Lleida, the second brand according to the area, is a tourism desert. Here, most municipalities don’t have any Airbnb listings. The Els Alamús website encapsulates this perfectly: its tourism section is empty.',
     location: {
       center: { lon: 0.80473, lat: 41.84571 },
 zoom: 9.26,
@@ -244,11 +228,11 @@ bearing: -14.35
   },
   {
     id: 'Alamús',
-    title: 'But Barcelona is the worst',
-    image: './path/to/image/source.png',
+    title: 'Alamús: the land of no tourism',
+    image: '',
     description: 'Copy these sections to add to your story.',
     location: {
-      center: { lon: 0.73569, lat: 41.63954 },
+      center: { lon: 0.73569, lat: 41.61954 },
 zoom: 12.55,
 pitch: 56.00,
 bearing: 0.00
@@ -257,12 +241,16 @@ bearing: 0.00
       layer: 'airbnb-fill',
       opacity: 0.7,
 
- }],
+ },{
+  layer: 'Alamus',
+  opacity: 0.5}],
     onChapterExit: [{
       layer: 'airbnb-fill',
       opacity: 0,
 
- }]
+ },{
+  layer: 'Alamus',
+  opacity: 0}]
   }
   ]
 };

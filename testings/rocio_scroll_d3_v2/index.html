@@ -20,9 +20,6 @@
     <meta property='og:description' content='This interactive, scrollable data visualisation will take you on a journey through all of the different college majors in the United States, and compare how they stack up in terms of median graduate salary, gender ratios, employability, and other factors. '/>
     <meta property='og:url' content='https://cuthchow.github.io/college-majors-visualisation/'/>
 
-
-
-    <title>Catalonia: The land of tourists</title>
 </head>
 
 
@@ -30,7 +27,6 @@
     <div class="intro">
     <h1>Catalonia: The land of tourists</h1></div>
 
-     <main>
     <div id="graphic">
         <div id="sections">
              <section class="step">                
@@ -70,17 +66,15 @@
                 <div class="box">
                     <p>Without Barcelona, the cities of Salou, Roses and Lloret de Mar are the ones with more turistic apartments on airbnb. All of them are specialized in drunken and mass tourism</p>
                 </div>
-                <svg class="legend" width='400px' height='500px'></svg>
             </section>
             <section class="step">
-                <div id="map"></div>
-                <div id="story"></div>
-                    
+             <div id="map"></div>
+             <div id="story"></div> 
             </section>
         </div>
-        <div id="vis"></div>
+        <div id="vis-container">
+        <div id="vis"></div></div>
         </div>
-    </main>   
 
     </div>
 
@@ -303,6 +297,36 @@
             'source': 'Municipalities',
             'source-layer': 'Municipalities',
             'filter': ['in', "cap_muni", "Begur"],
+            'paint': {
+            "line-color": "#333333",
+            "line-width": 4,
+            "line-opacity": 0
+            
+            }
+                }, "settlement-subdivision-label");
+
+                map.addLayer({
+            'id': 'NautAran',
+            'type': 'line',
+            'renderingMode': '2d',
+            'source': 'Municipalities',
+            'source-layer': 'Municipalities',
+            'filter': ['in', "codiine", "25025"],
+            'paint': {
+            "line-color": "#333333",
+            "line-width": 4,
+            "line-opacity": 0
+            
+            }
+                }, "settlement-subdivision-label");
+
+                map.addLayer({
+            'id': 'Alamus',
+            'type': 'line',
+            'renderingMode': '2d',
+            'source': 'Municipalities',
+            'source-layer': 'Municipalities',
+            'filter': ['in', "codiine", "25004"],
             'paint': {
             "line-color": "#333333",
             "line-width": 4,

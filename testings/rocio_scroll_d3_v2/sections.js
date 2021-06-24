@@ -8,9 +8,13 @@ let fillScale, square
 let bar_start_points, start_x
 
 const margin = {left: 140, top: 125, bottom: 35, right: 20}
-const width = 850 - margin.left - margin.right
-const height = 850 - margin.top - margin.bottom
-const paddingMap = 150;
+const width = 700 // - margin.left - margin.right
+const height = 700 //- margin.top - margin.bottom
+
+
+
+
+const paddingMap = 100;
 
 const colors = ['#ffcc00', '#ff6666', '#cc0066', '#66cccc', '#f688bb', '#65587f', '#baf1a1', '#333333', '#75b79e',  '#66cccc', '#9de3d0', '#f1935c', '#0c7b93', '#eab0d9', '#baf1a1', '#9399ff']
 
@@ -397,9 +401,10 @@ function drawInitial(){
 
     let svg = d3.select("#vis")
                 .append('svg')
-                .attr('width', 1000)
-                .attr('height', 1000)
+                .attr('width', '100%')
+                .attr('height', '100vh')
                 .attr('opacity', 1)
+
 
 
     // SIMULATION FORCES
@@ -435,7 +440,7 @@ function drawInitial(){
 
     // DRAW 0 - CATALONIA MAP - ADDING TO SVG
     // **************************************
-    square = d3.symbol().type(d3.symbolSquare).size(width/3);
+    square = d3.symbol().type(d3.symbolSquare).size(width/2);
     
     nodes = svg
         .selectAll('circle')
@@ -443,7 +448,6 @@ function drawInitial(){
         .join('circle')
             .attr('fill', d => d.airbnb > 0 ? teal : 'none')
             .attr('stroke', d => d.airbnb > 0 ? 'none' : teal)
-            .attr('margin-left', 100)
             .attr('r', 4)
             .attr('cx', d => map_0_xScale(d.mapX))
             .attr('cy', d => map_0_yScale(d.mapY))
