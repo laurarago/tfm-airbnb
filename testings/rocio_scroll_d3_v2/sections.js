@@ -597,8 +597,16 @@ function drawInitial(){
 
     // LABELS FOR FORCE BAR GRAPHS
     const chunk_label_data = [
-        {'name': 'Airbnbs', 'start': 0},
-        {'name': 'No Airbnbs', 'start': 465}
+        {'name': 'with airbnb', 'startx': 0, 'starty': 30},
+        {'name': 'without airbnb', 'startx': 468, 'starty': 20}
+    ]
+    const chunk_label_data1 = [
+        {'name': 'Municipalities', 'start': 0},
+        {'name': 'Municipalities', 'start': 468}
+    ]
+    const chunk_label_data2 = [
+        {'name': '828', 'start': 0},
+        {'name': '119', 'start': 468}
     ]
 
     const brand_label_data = [
@@ -619,9 +627,36 @@ function drawInitial(){
         .selectAll('text')
             .data(chunk_label_data)
             .join('text')
+            .attr('x', d => d.startx + 60)
+            .attr('y', height - margin.bottom - 55)
+            .text(d => d.name)
+            .attr('font-family', 'Roboto Condensed')
+
+     svg.append('g')
+        .attr('opacity', 0)
+        .attr('class', 'chunkLabels')
+        .selectAll('text')
+            .data(chunk_label_data1)
+            .join('text')
             .attr('x', d => d.start + 60)
             .attr('y', height - margin.bottom - 75)
             .text(d => d.name)
+            .attr('font-family', 'Roboto Condensed')
+            .attr('font-weight', 200)
+
+
+    svg.append('g')
+        .attr('opacity', 0)
+        .attr('class', 'chunkLabels')
+        .selectAll('text')
+            .data(chunk_label_data2)
+            .join('text')
+            .attr('x', d => d.start + 60)
+            .attr('y', height - margin.bottom - 95)
+            .text(d => d.name)
+            .attr('font-family', 'Roboto Condensed')
+            .attr('font-weight', 800)
+            .attr('text-decoration','underline')
 
     svg.append('g')
         .attr('class', 'brandLabels')
@@ -676,6 +711,7 @@ function drawInitial(){
         y: bcn_air,
         dy: 30,
         dx: -40,
+        color: ["#323232"],
         subject: { radius: ann_radius, radiusPadding: ann_padding }
     }]
 
@@ -687,6 +723,7 @@ function drawInitial(){
         y: salou_air,
         dy: -25,
         dx: 40,
+        color: ["#323232"],
         subject: { radius: ann_radius, radiusPadding: ann_padding }
     }]
 
@@ -698,6 +735,7 @@ function drawInitial(){
         y: roses_air,
         dy: 40,
         dx: 40,
+        color: ["#323232"],
         subject: { radius: ann_radius, radiusPadding: ann_padding }
     }]
 
@@ -709,6 +747,7 @@ function drawInitial(){
         y: lloret_air,
         dy: -25,
         dx: 40,
+        color: ["#323232"],
         subject: { radius: ann_radius, radiusPadding: ann_padding }
     }]
 
@@ -720,6 +759,7 @@ function drawInitial(){
         y: begur_perAir,
         dy: 30,
         dx: 45,
+        color: ["#323232"],
         subject: { radius: ann_radius, radiusPadding: ann_padding }
     }]
 
@@ -731,6 +771,7 @@ function drawInitial(){
         y: pals_perAir,
         dy: 40,
         dx: 40,
+        color: ["#323232"],
         subject: { radius: ann_radius, radiusPadding: ann_padding }
     }]
 
@@ -742,6 +783,7 @@ function drawInitial(){
     svg.append('g')
         .attr('opacity', 0)
         .attr('class', 'annotation_bcn')
+        .attr("font-family", "Roboto Condensed")
         .call(makeAnnotation_bcn)
 
     // airbnbs
@@ -753,6 +795,7 @@ function drawInitial(){
     svg.append('g')
         .attr('opacity', 0)
         .attr('class', 'annotation_airbnbs')
+        .attr("font-family", "Roboto Condensed")
         .call(makeAnnotation_salou)
     // roses
     makeAnnotation_roses = d3.annotation()
@@ -762,6 +805,7 @@ function drawInitial(){
     svg.append('g')
         .attr('opacity', 0)
         .attr('class', 'annotation_airbnbs')
+        .attr("font-family", "Roboto Condensed")
         .call(makeAnnotation_roses)
     //loret
     makeAnnotation_lloret = d3.annotation()
@@ -771,6 +815,7 @@ function drawInitial(){
     svg.append('g')
         .attr('opacity', 0)
         .attr('class', 'annotation_airbnbs')
+        .attr("font-family", "Roboto Condensed")
         .call(makeAnnotation_lloret)
 
     // percent graph
@@ -782,6 +827,7 @@ function drawInitial(){
     svg.append('g')
         .attr('opacity', 0)
         .attr('class', 'annotation_perc')
+        .attr("font-family", "Roboto Condensed")
         .call(makeAnnotation_begur)
 
     // pals
@@ -792,7 +838,9 @@ function drawInitial(){
     svg.append('g')
         .attr('opacity', 0)
         .attr('class', 'annotation_perc')
+        .attr("font-family", "Roboto Condensed")
         .call(makeAnnotation_pals)
+   
 
 }
 
