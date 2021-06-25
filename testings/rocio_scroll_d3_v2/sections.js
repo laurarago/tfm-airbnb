@@ -399,6 +399,9 @@ function setupGrid(grid_cols, bar_group, bar_label) {
 
 function drawInitial(){
 
+    // avoid hand cursor appears
+    document.getElementById("map").style.display = "none";
+
     let svg = d3.select("#vis")
                 .append('svg')
                 .attr('width', '100%')
@@ -809,9 +812,10 @@ function drawInitial(){
 
 function clean(chartType){
     let svg = d3.select('#vis').select('svg')
-    if (chartType !== 'isDraw0') {
-        // no axes needed for the graph, but will need a legend of some kind
+    
+    if (chartType !== 'isDraw0') { 
     }
+
     if (chartType !== 'isDraw05') {
         svg.selectAll('.chunkLabels').transition().attr('opacity', 0)
     }
@@ -848,6 +852,12 @@ function clean(chartType){
         // no axes needed for the graph, but will need a legend of some kind
     }
 
+    if (chartType == "isDraw7"){
+        document.getElementById("map").style.display = "block";
+    }else{
+        document.getElementById("map").style.display = "none";
+    }
+
 }
 
 // ************************** END CLEAN FUNCTION **************************//
@@ -856,7 +866,13 @@ function clean(chartType){
 // ************************** ALL DRAW FUNCTIONS **************************//
 
 //First draw function
+
+function drawCover(){
+
+}
+
 function draw0(){
+    clean('isDraw0')
     simulation.stop()
     
     let svg = d3.select("#vis")
@@ -876,7 +892,6 @@ function draw0(){
         // .attr('r', 3)
         .attr('cx', d => map_0_xScale(d.mapX))
         .attr('cy', d => map_0_yScale(d.mapY))
-
 }
 
 function draw05(){
@@ -1057,6 +1072,7 @@ function draw7(){
 //Will be called from the scroller functionality
 
 let activationFunctions = [
+    drawCover,
     draw0,
     draw05,
     draw1,
