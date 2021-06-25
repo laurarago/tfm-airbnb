@@ -228,7 +228,7 @@ bearing: -14.35
   },
   {
     id: 'Alamús',
-    title: 'Alamús: the land of no tourism',
+    title: 'Els Alamús: the land of no tourism',
     image: '',
     description: 'With no tourist claims, with less than a thousand inhabitants and 21% of its population over 65, this town in the Segrià region summarizes the main characteristics of Catalonia without visitors.',
     location: {

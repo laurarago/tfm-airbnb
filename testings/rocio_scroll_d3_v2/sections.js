@@ -336,15 +336,14 @@ function drawInitial(){
     // CREATE ALL AXES — SET OPACITY TO 0
 
     // NUMBER OF AIRBNBS
-    let airbnbAxis = d3.axisLeft(airbnbScale).ticks(8).tickPadding(10).tickSize([width])
+    let airbnbAxis = d3.axisLeft(airbnbScale)
     
     svg.append('g')
         .call(airbnbAxis)
-        .attr('class', 'airbnbAxis')
-        .attr('opacity', 0)
-        .attr('transform', `translate(${margin.left + width}, 0)`)
-        .call(g => g.select('.domain')
-            .remove())
+            .attr('class', 'airbnbAxis')
+            .attr('opacity', 0)
+            .attr("transform", `translate(${margin.left},0)`)
+        .call(g => g.select(".domain"))
         .call(g => g.selectAll('.tick line'))
             .attr('stroke-opacity', 0.2)
             .attr('stroke-color', '#d6d6d6')
@@ -353,74 +352,91 @@ function drawInitial(){
             .attr('font-color', '#333333')
             .attr('font-family', 'Roboto Condensed')
         .call(g => g.select(".tick:last-of-type text").clone()
-            .attr("x", 3)
-            // .attr('y', 0)
+            .attr("x", 5)
             .attr("text-anchor", "start")
             .attr('font-weight', 'bold')
             .attr('font-size', '0.8rem')
             .attr('font-color', '#333333')
             .attr('font-family', 'Roboto Condensed')
-            .text('number of Airbnbs'))
+            .text('Number of AirBnBs'))
 
+        // .attr('transform', `translate(${margin.left + width}, 0)`)
+        // .call(g => g.select('.domain')
+        //     .remove())
+        // .call(g => g.selectAll('.tick line'))
+        //     .attr('stroke-opacity', 0.2)
+        //     .attr('stroke-color', '#d6d6d6')
+        //     .attr("text-anchor", "end")
+        //     .attr('font-size', '0.8rem')
+        //     .attr('font-color', '#333333')
+        //     .attr('font-family', 'Roboto Condensed')
 
-
-        // .call(g => g.select(".tick:last-of-type text").clone()
-        //     .attr("x", 3)
-        //     .attr("text-anchor", "start")
-        //     .attr('font-weight', 'bold')
-        //     .text('AirBnBs'))
         
     
     // NUMBER OF AIRBNBS WITHOUT BARCELONA
-    let airbnbAxis_noBCN = d3.axisLeft(airbnbScale_noBCN).ticks(8).tickPadding(40).tickSize([width])
+    let airbnbAxis_noBCN = d3.axisLeft(airbnbScale_noBCN)//.ticks(8).tickPadding(40)
     
     svg.append('g')
         .call(airbnbAxis_noBCN)
-        .attr('class', 'airbnbAxis_noBCN')
-        .attr('opacity', 0)
-        .attr('transform', `translate(${margin.left - 20 + width}, 0)`)
-        .call(g => g.select('.domain')
-            .remove())
-        .call(g => g.selectAll('.tick line'))
-            .attr('stroke-opacity', 0.2)
-            .attr('stroke-color', '#d6d6d6')
-            .attr("text-anchor", "start")
+            .attr('class', 'airbnbAxis_noBCN')
+            .attr('opacity', 0)
+            .attr('transform', `translate(${margin.left}, 0)`)
             .attr('font-size', '0.8rem')
             .attr('font-color', '#333333')
             .attr('font-family', 'Roboto Condensed')
+        .call(g => g.select('.domain'))
+        .call(g => g.selectAll('.tick line'))
+            .attr('stroke-opacity', 0.2)
+            .attr('stroke-color', '#d6d6d6')
+            .attr("text-anchor", "end")
+        .call(g => g.select(".tick:last-of-type text").clone()
+            .attr("x", 5)
+            .attr("text-anchor", "start")
+            .attr('font-weight', 'bold')
+            .text('Number of AirBnBs'))
 
 
     // PERCENT AIRBNBS
-    let airbnbPerAxis = d3.axisLeft(airbnbPerScale).ticks(8).tickPadding(40).tickSize([width])
+    let airbnbPerAxis = d3.axisLeft(airbnbPerScale)//.ticks(8).tickPadding(40).tickSize([width])
     
     svg.append('g')
         .call(airbnbPerAxis)
-        .attr('class', 'airbnbPerAxis')
-        .attr('opacity', 0)
-        .attr('transform', `translate(${margin.left - 20 + width}, 0)`)
-        .call(g => g.select('.domain')
-            .remove())
+            .attr('class', 'airbnbPerAxis')
+            .attr('opacity', 0)
+            .attr('transform', `translate(${margin.left}, 0)`)
+            .attr('font-size', '0.8rem')
+            .attr('font-color', '#333333')
+            .attr('font-family', 'Roboto Condensed')
+        .call(g => g.select('.domain'))
         .call(g => g.selectAll('.tick line'))
             .attr('stroke-opacity', 0.2)
             .attr('stroke-color', '#d6d6d6')
+            .attr("text-anchor", "end")
+        .call(g => g.select(".tick:last-of-type text").clone()
+            .attr("x", 5)
             .attr("text-anchor", "start")
-            .attr('font-size', '0.8rem')
-            .attr('font-color', '#333333')
-            .attr('font-family', 'Roboto Condensed')
+            .attr('font-weight', 'bold')
+            .text('% of apartments that are Airbnbs'))
 
+        
     // POPULATION
-    let popAxis = d3.axisBottom(popScale).tickSize([0]).ticks(6).tickPadding(10)
+    let popAxis = d3.axisBottom(popScale)//.tickSize([0]).ticks(6).tickPadding(10)
     
     svg.append('g')
         .call(popAxis)
-        .attr('class', 'popAxis')
-        .attr('opacity', 0)
-        .attr("transform", `translate(0,${height - margin.bottom})`)
-        .attr('font-size', '0.8rem')
-        .attr('font-color', '#333333')
-        .attr('font-family', 'Roboto Condensed')
-        .call(g => g.select('.domain')
-            .remove())
+            .attr('class', 'popAxis')
+            .attr('opacity', 0)
+            .attr("transform", `translate(0,${height - margin.bottom})`)
+            .attr('font-size', '0.8rem')
+            .attr('font-color', '#333333')
+            .attr('font-family', 'Roboto Condensed')
+        .call(g => g.select('.domain'))
+        .call(g => g.selectAll('.tick line'))
+            .attr('stroke-opacity', 0.2)
+            .attr('stroke-color', '#d6d6d6')
+            .attr('font-size', '0.8rem')
+            .attr('font-color', '#333333')
+            .attr('font-family', 'Roboto Condensed')
         .call(g => g.select(".tick:last-of-type text").clone()
             .attr("x", -22)
             .attr('y', 25)
@@ -429,30 +445,29 @@ function drawInitial(){
             .attr('font-size', '0.8rem')
             .attr('font-color', '#333333')
             .attr('font-family', 'Roboto Condensed')
-            .text('population'))
+            .text('Population'))
     
     // POPULATION WITHOUT BARCELONA
-    let popAxis_noBCN = d3.axisBottom(popScale_noBCN).tickSize([0]).ticks(6)
+    let popAxis_noBCN = d3.axisBottom(popScale_noBCN)//.tickSize([0]).ticks(6)
 
     svg.append('g')
         .call(popAxis_noBCN)
-        .attr('class', 'popAxis_noBCN')
-        .attr('opacity', 0)
-        .attr("transform", `translate(0,${height - margin.bottom})`)
-        .attr('font-size', '0.8rem')
-        .attr('font-color', '#333333')
-        .attr('font-family', 'Roboto Condensed')
-        .call(g => g.select('.domain')
-            .remove())
+            .attr('class', 'popAxis_noBCN')
+            .attr('opacity', 0)
+            .attr("transform", `translate(0,${height - margin.bottom})`)
+            .attr('font-size', '0.8rem')
+            .attr('font-color', '#333333')
+            .attr('font-family', 'Roboto Condensed')
+        .call(g => g.select('.domain'))
+        .call(g => g.selectAll('.tick line'))
+            .attr('stroke-opacity', 0.2)
+            .attr('stroke-color', '#d6d6d6')
         .call(g => g.select(".tick:last-of-type text").clone()
             .attr("x", -22)
             .attr('y', 25)
             .attr("text-anchor", "start")
             .attr('font-weight', 'bold')
-            .attr('font-size', '0.8rem')
-            .attr('font-color', '#333333')
-            .attr('font-family', 'Roboto Condensed')
-            .text('population')) 
+            .text('Population')) 
 
     // LABELS FOR FORCE BAR GRAPHS
     const chunk_label_data = [
@@ -616,12 +631,13 @@ function drawInitial(){
 
     annotation_bcn = [{
         note: {
-            title: 'Barcelona'
+            title: 'Barcelona',
+            label: 'With more than 1.5 million inhabitants and almost 30,000 Airbnb apartments, Barcelona is a unique case in Catalonia'
         },
         x: bcn_pop,
         y: bcn_air,
-        dy: 30,
-        dx: -40,
+        dy: 80,
+        dx: -60,
         color: ["#323232"],
         subject: { radius: ann_radius, radiusPadding: ann_padding }
     }]
@@ -712,6 +728,7 @@ function drawInitial(){
     // scatterplots
     makeAnnotation_bcn = d3.annotation()
                              .annotations(annotation_bcn)
+                             .textWrap(200)
                              .type(d3.annotationCalloutCircle)
 
     svg.append('g')
@@ -865,7 +882,7 @@ function draw0(){
         .attr('fill', d => d.airbnb > 0 ? teal : 'none')
         .attr('stroke', d => d.airbnb > 0 ? 'none' : teal)
         .attr('stroke-width', 1)
-        // .attr('r', 3)
+        .attr('r', 5)
         .attr('cx', d => map_0_xScale(d.mapX))
         .attr('cy', d => map_0_yScale(d.mapY))
 
@@ -885,6 +902,7 @@ function draw05(){
 
     svg.selectAll('circle')
         .transition().duration(100).ease(d3.easeBack)
+        .attr('r', 4)
         .attr('fill', d => d.airbnb > 0 ? teal : 'none')
         .attr('stroke', d => d.airbnb > 0 ? 'none' : teal)
     
@@ -979,7 +997,7 @@ function draw4(){
         .attr('cx', d => popScale_noBCN(d.population))
         .attr('cy', d => airbnbPerScale(d.perc_Airbnb))
         // .attr('r', 4)
-        .attr('fill', d => {if (d.municipality == 'Barcelona' || isNaN(d.perc_Airbnb)){ return 'none'} else { return teal }})
+        .attr('fill', d => d.perc_Airbnb ? teal : 'none')//{if (d.municipality == 'Barcelona' || isNaN(d.perc_Airbnb)){ return 'none'} else { return teal }})
         .attr('opacity', 0.7)
 
 }
