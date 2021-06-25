@@ -90,19 +90,29 @@ strong {
 
 #vis-container {
     margin: 0 auto;
-    width: 75%
-
+    /* display: flex; */
+    max-width: 75%;
+    height: 100vh;
+    /* padding-bottom: 2vh; */
 }
 
 #vis {
     display: inline-block;
+    /* box-sizing: border-box; */
     margin: 0 auto;
     position: fixed;
     top: 0;
     z-index: 1;
+    /* height: 100vh; */
     height: 100vh;
     width: 75%;
+    /* padding: 2vh; */
+
     
+}
+
+g.brandLabels {
+
 }
 
 .tick line {
@@ -141,7 +151,10 @@ strong {
 
 svg {
     display: inline-block;
+    box-sizing: border-box;
     margin: 0 auto;
+    max-height: 100%;
+
 }
 
 svg circle:hover{
@@ -161,11 +174,10 @@ a {
     text-decoration: none;
 }
 
-
-
 a, a:hover, a:visited {
     color: #06bc00;
 }
+
 #map {
     top:0; 
     height: 100vh;
