@@ -912,7 +912,7 @@ function clean(chartType){
         // no axes needed for the graph, but will need a legend of some kind
     }
 
-    if (chartType == "isDraw7"){
+    if (chartType == "isDraw6"){
         document.getElementById("map").style.display = "block";
     }else{
         document.getElementById("map").style.display = "none";

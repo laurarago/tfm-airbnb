@@ -232,7 +232,7 @@ a, a:hover, a:visited {
 }
 
 .step img {
-    /*width: 100%;*/
+    width: 100%;
     opacity: 1 !important;
     margin: auto;
 
