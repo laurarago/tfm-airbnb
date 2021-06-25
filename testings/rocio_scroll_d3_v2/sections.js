@@ -581,34 +581,50 @@ function drawInitial(){
             .attr('font-family', 'Roboto Condensed')
 
     // POPULATION
-    let popAxis = d3.axisBottom(popScale)
+    let popAxis = d3.axisBottom(popScale).tickSize([0]).ticks(6)
     
     svg.append('g')
         .call(popAxis)
         .attr('class', 'popAxis')
         .attr('opacity', 0)
         .attr("transform", `translate(0,${height - margin.bottom})`)
+        .attr('font-size', '0.8rem')
+        .attr('font-color', '#333333')
+        .attr('font-family', 'Roboto Condensed')
+        .call(g => g.select('.domain')
+            .remove())
         .call(g => g.select(".tick:last-of-type text").clone()
             .attr("x", -22)
             .attr('y', 25)
             .attr("text-anchor", "start")
             .attr('font-weight', 'bold')
+            .attr('font-size', '0.8rem')
+            .attr('font-color', '#333333')
+            .attr('font-family', 'Roboto Condensed')
             .text('population'))
     
     // POPULATION WITHOUT BARCELONA
-    let popAxis_noBCN = d3.axisBottom(popScale_noBCN)
+    let popAxis_noBCN = d3.axisBottom(popScale_noBCN).tickSize([0]).ticks(6)
 
     svg.append('g')
         .call(popAxis_noBCN)
         .attr('class', 'popAxis_noBCN')
         .attr('opacity', 0)
         .attr("transform", `translate(0,${height - margin.bottom})`)
+        .attr('font-size', '0.8rem')
+        .attr('font-color', '#333333')
+        .attr('font-family', 'Roboto Condensed')
+        .call(g => g.select('.domain')
+            .remove())
         .call(g => g.select(".tick:last-of-type text").clone()
             .attr("x", -22)
             .attr('y', 25)
             .attr("text-anchor", "start")
             .attr('font-weight', 'bold')
-            .text('population'))    
+            .attr('font-size', '0.8rem')
+            .attr('font-color', '#333333')
+            .attr('font-family', 'Roboto Condensed')
+            .text('population')) 
 
     // LABELS FOR FORCE BAR GRAPHS
     const chunk_label_data = [
