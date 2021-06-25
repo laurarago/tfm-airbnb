@@ -90,5 +90,5 @@ However, there is a clear division among the coast and the interior. And, in the
 
 
 ## Team
-| **Students &rightarrow;**  | Sara Chodosh, Ànnia Monreal, Rocío Márquez and Laura Aragó|
+| **Students &rightarrow;**  | [Sara Chodosh](https://twitter.com/schodosh), Ànnia Monreal, [Rocío Márquez](https://twitter.com/arixha) and Laura Aragó|
 | **Mentors &rightarrow;**  | Apple Chan, Carla Garcia and Karma Peiró|
