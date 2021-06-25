@@ -89,10 +89,6 @@ However, there is a clear division among the coast and the interior. And, in the
 
 
 
-## Teams
-| **Students &rightarrow;**  | Ànnia, Laura, Rocío, Sara |
-| **Mentors &rightarrow;**  | Apple, Carla, Karma |
-
-## Timeline
-* Hackathon:  Jun 5th and 6th
-* Deadline:  Jun 26th
+## Team
+| **Students &rightarrow;**  | Sara Chodosh, Ànnia Monreal, Rocío Márquez and Laura Aragó|
+| **Mentors &rightarrow;**  | Apple Chan, Carla Garcia and Karma Peiró|
