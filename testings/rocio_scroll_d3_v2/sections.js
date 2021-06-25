@@ -105,6 +105,8 @@ function createScales(){
     //fillScale = d3.scaleSequential(d3.interpolateGnBu)
     //fillScale = d3.scaleLinear().domain([1,10]).range(["#ffffff", "#3da2a4"])
     fillScale = d3.scaleSequential(chroma.scale(['#fff', teal, newblue]))
+
+    
 }
 
 // function legend({
@@ -521,49 +523,59 @@ function drawInitial(){
     // CREATE ALL AXES — SET OPACITY TO 0
 
     // NUMBER OF AIRBNBS
-    let airbnbAxis = d3.axisLeft(airbnbScale)
+    let airbnbAxis = d3.axisLeft(airbnbScale).ticks(8).tickPadding(40).tickSize([width])
     
     svg.append('g')
         .call(airbnbAxis)
         .attr('class', 'airbnbAxis')
         .attr('opacity', 0)
-        .attr("transform", `translate(${margin.left},0)`)
-        .call(g => g.select(".domain"))
-        .call(g => g.select(".tick:last-of-type text").clone()
-            .attr("x", 3)
+        .attr('transform', `translate(${margin.left - 20 + width}, 0)`)
+        .call(g => g.select('.domain')
+            .remove())
+        .call(g => g.selectAll('.tick line'))
+            .attr('stroke-opacity', 0.2)
+            .attr('stroke-color', '#d6d6d6')
             .attr("text-anchor", "start")
-            .attr('font-weight', 'bold')
-            .text('AirBnBs'))
+            .attr('font-size', '0.8rem')
+            .attr('font-color', '#333333')
+            .attr('font-family', 'Roboto Condensed')
     
     // NUMBER OF AIRBNBS WITHOUT BARCELONA
-    let airbnbAxis_noBCN = d3.axisLeft(airbnbScale_noBCN)
+    let airbnbAxis_noBCN = d3.axisLeft(airbnbScale_noBCN).ticks(8).tickPadding(40).tickSize([width])
     
     svg.append('g')
         .call(airbnbAxis_noBCN)
         .attr('class', 'airbnbAxis_noBCN')
         .attr('opacity', 0)
-        .attr("transform", `translate(${margin.left},0)`)
-        .call(g => g.select(".domain"))
-        .call(g => g.select(".tick:last-of-type text").clone()
-            .attr("x", 3)
+        .attr('transform', `translate(${margin.left - 20 + width}, 0)`)
+        .call(g => g.select('.domain')
+            .remove())
+        .call(g => g.selectAll('.tick line'))
+            .attr('stroke-opacity', 0.2)
+            .attr('stroke-color', '#d6d6d6')
             .attr("text-anchor", "start")
-            .attr('font-weight', 'bold')
-            .text('AirBnBs'))
+            .attr('font-size', '0.8rem')
+            .attr('font-color', '#333333')
+            .attr('font-family', 'Roboto Condensed')
+
 
     // PERCENT AIRBNBS
-    let airbnbPerAxis = d3.axisLeft(airbnbPerScale)
+    let airbnbPerAxis = d3.axisLeft(airbnbPerScale).ticks(8).tickPadding(40).tickSize([width])
     
     svg.append('g')
         .call(airbnbPerAxis)
         .attr('class', 'airbnbPerAxis')
         .attr('opacity', 0)
-        .attr("transform", `translate(${margin.left},0)`)
-        .call(g => g.select(".domain"))
-        .call(g => g.select(".tick:last-of-type text").clone()
-            .attr("x", 3)
+        .attr('transform', `translate(${margin.left - 20 + width}, 0)`)
+        .call(g => g.select('.domain')
+            .remove())
+        .call(g => g.selectAll('.tick line'))
+            .attr('stroke-opacity', 0.2)
+            .attr('stroke-color', '#d6d6d6')
             .attr("text-anchor", "start")
-            .attr('font-weight', 'bold')
-            .text('percent AirBnB'))
+            .attr('font-size', '0.8rem')
+            .attr('font-color', '#333333')
+            .attr('font-family', 'Roboto Condensed')
 
     // POPULATION
     let popAxis = d3.axisBottom(popScale)
