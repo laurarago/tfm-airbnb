@@ -87,6 +87,9 @@ However, there is a clear division among the coast and the interior. And, in the
 ## What's on this folder
  
 
+## The Project
+The project The Two Catalonias was designed and developed in the Master’s program in Visual Tools to Empower Citizens (MVTEC) organized by Fundació UdG and the ViT Foundation.
+
 
 
 ## Team
