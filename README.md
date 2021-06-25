@@ -3,21 +3,25 @@
 
 ## Introduction
 
-... Example we have to change...
+Our goal for this project was to analyze the rise of tourism in Catalonia using Airbnb (or other tourist rental) data. We achieved that goal, though weren’t able to come to the kind of firm conclusions we were hoping to find through our data analysis. Our original intention was to correlate the rise of rent prices with the proliferation of tourist rentals, but our statistical analysis actually showed that though there was a correlation in some places, it wasn’t strong and couldn’t be tied to an increase in rental homes. 
 
-Last year, COVID-19 locked us home and upended our lives.
+Instead, we decided to focus on the defining characteristic we discovered: that there are really two Catalonias. One is full of tourists — in some places there are more tourist apartments than regular ones — and the other is all locals. 
 
-They were hard times for many, and we want to explore the relationship between **our struggles** and **our solidarity** during the pandemic using [Google Trends](https://trends.google.com/).
+Our story focuses mainly on the 87.4% of municipalities that have Airbnb listings and the patterns we could find, especially by organizing the municipalities into the nine tourist brands that the Catalan government uses: 
 
-The idea for this project is to visualize the dichotomy: 
-* **Who/When/Where/What for we ask for help**,
-* **Who/When/Where/What for we offer help**.
+* **Barcelona**,
+* **Costa Daurada**,
+* **Costa Brava**,
+* **Costa Barcelona**,
+* **Val d’Aran**,
+* **Pirineus**,
+* **Terres de Lleida**,
+* **Paisatges de Barcelona**,
+* **Terres de l’Ebre**,
 
-A look at the trend in the last 5 years shows [a peak around March last year](https://trends.google.com/trends/explore?date=today%205-y&q=help) ... was it the pandemic? 
+The final piece tells the story of these two Catalonias, and how tourism impacts them each individually.
 
-For example mental health issues, international solidarity and ways to support Black Lives Matter pop up in this view of [last year's trending topics](https://trends.google.com/trends/yis/2020/US/#4816dfbf-7056-428a-a89d-03bbd4a29ba6)
 
-We're thrilled to count with the support of [Google News Lab](https://newsinitiative.withgoogle.com/google-news-lab): [Simon Rogers](https://simonrogers.net/) and [Alberto Cairo](http://albertocairo.com/) will assit with the data, editorial and visual angle of this project!! They'll also be joining us at the hackathon on May 15.
 
 ## In this repository
 ... In the [`app`](app) folder you'll find a boilerplate(ish) template, it's similar to the `mvtec-svelte-app`, with the addition of `svelte-materialify` —so we don't spend too much time overdesigning the UI.
