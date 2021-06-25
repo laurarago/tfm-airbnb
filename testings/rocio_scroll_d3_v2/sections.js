@@ -697,6 +697,7 @@ function drawInitial(){
             .join('text')
             .attr('x', d => d.start + 27)
             .attr('y', height - margin.bottom - 90)
+            .attr('font-family', 'Roboto Condensed')
             .text(d => d.name)
     
 
@@ -888,7 +889,8 @@ function drawInitial(){
 
 function clean(chartType){
     let svg = d3.select('#vis').select('svg')
-    
+    if (chartType !== 'isdrawCover') { 
+    }
     if (chartType !== 'isDraw0') { 
     }
 

@@ -159,7 +159,7 @@ var config = {
     id: 'Naut Aran',
     title: 'Naut Aran, the Pyrenees Gaulish',
     image: '',
-    description: 'Beaches aren’t the only attraction in Catalonia. For skiing or trekking, Val d’Aran is a paradise for those who prefer a backpack to a swimsuit. Here, Naut Aran has the <b>highest percentage of Airbnb’s</b> at 66% (494 tourist apartments).',
+    description: 'Beaches aren’t the only attraction in Catalonia. For skiing or trekking, Val d’Aran is a paradise for those who prefer a backpack to a swimsuit. Naut Aran, a group of towns made up of Arties, Bagergue, Baqueira, Garòs, Gessa, Montgarri, Salardú, Tredòs and Unha, accounts for the <b>highest percentage of Airbnb</b> in all of Catalonia: 66%',
     location: {
       center: { lon: 0.90358, lat: 42.71372 },
       zoom: 10.27,
@@ -184,9 +184,9 @@ var config = {
   },
   {
     id: 'Barcelona',
-    title: 'But Barcelona is the worst',
+    title: 'Barcelona, crowded with touristic aparments',
     image: '',
-    description: 'Copy these sections to add to your story.',
+    description: `Airbnb has been a source of complaints and legal discussions in Barcelona, where the City Council's attempts to legalize tourist accommodation have not fully borne fruit. The platform is accused of promoting gentrification and raising the price of rents, as well as being a nightmare for some residents. In Barcelona, Airbnb's offer is concentrated in the districts of Ciutat Vella, l’Eixample and Gràcia.`,
     location: {
       center: { lon: 2.12195, lat: 41.41609 },
 zoom: 11.06,
@@ -230,7 +230,7 @@ bearing: -14.35
     id: 'Alamús',
     title: 'Alamús: the land of no tourism',
     image: '',
-    description: 'Copy these sections to add to your story.',
+    description: 'With no tourist claims, with less than a thousand inhabitants and 21% of its population over 65, this town in the Segrià region summarizes the main characteristics of Catalonia without visitors.',
     location: {
       center: { lon: 0.73569, lat: 41.61954 },
 zoom: 12.55,
