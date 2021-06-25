@@ -105,6 +105,8 @@ function createScales(){
     //fillScale = d3.scaleSequential(d3.interpolateGnBu)
     //fillScale = d3.scaleLinear().domain([1,10]).range(["#ffffff", "#3da2a4"])
     fillScale = d3.scaleSequential(chroma.scale(['#fff', teal, newblue]))
+
+    
 }
 
 // function legend({
@@ -524,49 +526,59 @@ function drawInitial(){
     // CREATE ALL AXES — SET OPACITY TO 0
 
     // NUMBER OF AIRBNBS
-    let airbnbAxis = d3.axisLeft(airbnbScale)
+    let airbnbAxis = d3.axisLeft(airbnbScale).ticks(8).tickPadding(40).tickSize([width])
     
     svg.append('g')
         .call(airbnbAxis)
         .attr('class', 'airbnbAxis')
         .attr('opacity', 0)
-        .attr("transform", `translate(${margin.left},0)`)
-        .call(g => g.select(".domain"))
-        .call(g => g.select(".tick:last-of-type text").clone()
-            .attr("x", 3)
+        .attr('transform', `translate(${margin.left - 20 + width}, 0)`)
+        .call(g => g.select('.domain')
+            .remove())
+        .call(g => g.selectAll('.tick line'))
+            .attr('stroke-opacity', 0.2)
+            .attr('stroke-color', '#d6d6d6')
             .attr("text-anchor", "start")
-            .attr('font-weight', 'bold')
-            .text('AirBnBs'))
+            .attr('font-size', '0.8rem')
+            .attr('font-color', '#333333')
+            .attr('font-family', 'Roboto Condensed')
     
     // NUMBER OF AIRBNBS WITHOUT BARCELONA
-    let airbnbAxis_noBCN = d3.axisLeft(airbnbScale_noBCN)
+    let airbnbAxis_noBCN = d3.axisLeft(airbnbScale_noBCN).ticks(8).tickPadding(40).tickSize([width])
     
     svg.append('g')
         .call(airbnbAxis_noBCN)
         .attr('class', 'airbnbAxis_noBCN')
         .attr('opacity', 0)
-        .attr("transform", `translate(${margin.left},0)`)
-        .call(g => g.select(".domain"))
-        .call(g => g.select(".tick:last-of-type text").clone()
-            .attr("x", 3)
+        .attr('transform', `translate(${margin.left - 20 + width}, 0)`)
+        .call(g => g.select('.domain')
+            .remove())
+        .call(g => g.selectAll('.tick line'))
+            .attr('stroke-opacity', 0.2)
+            .attr('stroke-color', '#d6d6d6')
             .attr("text-anchor", "start")
-            .attr('font-weight', 'bold')
-            .text('AirBnBs'))
+            .attr('font-size', '0.8rem')
+            .attr('font-color', '#333333')
+            .attr('font-family', 'Roboto Condensed')
+
 
     // PERCENT AIRBNBS
-    let airbnbPerAxis = d3.axisLeft(airbnbPerScale)
+    let airbnbPerAxis = d3.axisLeft(airbnbPerScale).ticks(8).tickPadding(40).tickSize([width])
     
     svg.append('g')
         .call(airbnbPerAxis)
         .attr('class', 'airbnbPerAxis')
         .attr('opacity', 0)
-        .attr("transform", `translate(${margin.left},0)`)
-        .call(g => g.select(".domain"))
-        .call(g => g.select(".tick:last-of-type text").clone()
-            .attr("x", 3)
+        .attr('transform', `translate(${margin.left - 20 + width}, 0)`)
+        .call(g => g.select('.domain')
+            .remove())
+        .call(g => g.selectAll('.tick line'))
+            .attr('stroke-opacity', 0.2)
+            .attr('stroke-color', '#d6d6d6')
             .attr("text-anchor", "start")
-            .attr('font-weight', 'bold')
-            .text('percent AirBnB'))
+            .attr('font-size', '0.8rem')
+            .attr('font-color', '#333333')
+            .attr('font-family', 'Roboto Condensed')
 
     // POPULATION
     let popAxis = d3.axisBottom(popScale)
@@ -600,8 +612,16 @@ function drawInitial(){
 
     // LABELS FOR FORCE BAR GRAPHS
     const chunk_label_data = [
-        {'name': 'Airbnbs', 'start': 0},
-        {'name': 'No Airbnbs', 'start': 465}
+        {'name': 'with airbnb', 'startx': 0, 'starty': 30},
+        {'name': 'without airbnb', 'startx': 468, 'starty': 20}
+    ]
+    const chunk_label_data1 = [
+        {'name': 'Municipalities', 'start': 0},
+        {'name': 'Municipalities', 'start': 468}
+    ]
+    const chunk_label_data2 = [
+        {'name': '828', 'start': 0},
+        {'name': '119', 'start': 468}
     ]
 
     const brand_label_data = [
@@ -622,9 +642,36 @@ function drawInitial(){
         .selectAll('text')
             .data(chunk_label_data)
             .join('text')
+            .attr('x', d => d.startx + 60)
+            .attr('y', height - margin.bottom - 55)
+            .text(d => d.name)
+            .attr('font-family', 'Roboto Condensed')
+
+     svg.append('g')
+        .attr('opacity', 0)
+        .attr('class', 'chunkLabels')
+        .selectAll('text')
+            .data(chunk_label_data1)
+            .join('text')
             .attr('x', d => d.start + 60)
             .attr('y', height - margin.bottom - 75)
             .text(d => d.name)
+            .attr('font-family', 'Roboto Condensed')
+            .attr('font-weight', 200)
+
+
+    svg.append('g')
+        .attr('opacity', 0)
+        .attr('class', 'chunkLabels')
+        .selectAll('text')
+            .data(chunk_label_data2)
+            .join('text')
+            .attr('x', d => d.start + 60)
+            .attr('y', height - margin.bottom - 95)
+            .text(d => d.name)
+            .attr('font-family', 'Roboto Condensed')
+            .attr('font-weight', 800)
+            .attr('text-decoration','underline')
 
     svg.append('g')
         .attr('class', 'brandLabels')
@@ -679,6 +726,7 @@ function drawInitial(){
         y: bcn_air,
         dy: 30,
         dx: -40,
+        color: ["#323232"],
         subject: { radius: ann_radius, radiusPadding: ann_padding }
     }]
 
@@ -690,6 +738,7 @@ function drawInitial(){
         y: salou_air,
         dy: -25,
         dx: 40,
+        color: ["#323232"],
         subject: { radius: ann_radius, radiusPadding: ann_padding }
     }]
 
@@ -701,6 +750,7 @@ function drawInitial(){
         y: roses_air,
         dy: 40,
         dx: 40,
+        color: ["#323232"],
         subject: { radius: ann_radius, radiusPadding: ann_padding }
     }]
 
@@ -712,6 +762,7 @@ function drawInitial(){
         y: lloret_air,
         dy: -25,
         dx: 40,
+        color: ["#323232"],
         subject: { radius: ann_radius, radiusPadding: ann_padding }
     }]
 
@@ -723,6 +774,7 @@ function drawInitial(){
         y: begur_perAir,
         dy: 30,
         dx: 45,
+        color: ["#323232"],
         subject: { radius: ann_radius, radiusPadding: ann_padding }
     }]
 
@@ -734,6 +786,7 @@ function drawInitial(){
         y: pals_perAir,
         dy: 40,
         dx: 40,
+        color: ["#323232"],
         subject: { radius: ann_radius, radiusPadding: ann_padding }
     }]
 
@@ -745,6 +798,7 @@ function drawInitial(){
     svg.append('g')
         .attr('opacity', 0)
         .attr('class', 'annotation_bcn')
+        .attr("font-family", "Roboto Condensed")
         .call(makeAnnotation_bcn)
 
     // airbnbs
@@ -756,6 +810,7 @@ function drawInitial(){
     svg.append('g')
         .attr('opacity', 0)
         .attr('class', 'annotation_airbnbs')
+        .attr("font-family", "Roboto Condensed")
         .call(makeAnnotation_salou)
     // roses
     makeAnnotation_roses = d3.annotation()
@@ -765,6 +820,7 @@ function drawInitial(){
     svg.append('g')
         .attr('opacity', 0)
         .attr('class', 'annotation_airbnbs')
+        .attr("font-family", "Roboto Condensed")
         .call(makeAnnotation_roses)
     //loret
     makeAnnotation_lloret = d3.annotation()
@@ -774,6 +830,7 @@ function drawInitial(){
     svg.append('g')
         .attr('opacity', 0)
         .attr('class', 'annotation_airbnbs')
+        .attr("font-family", "Roboto Condensed")
         .call(makeAnnotation_lloret)
 
     // percent graph
@@ -785,6 +842,7 @@ function drawInitial(){
     svg.append('g')
         .attr('opacity', 0)
         .attr('class', 'annotation_perc')
+        .attr("font-family", "Roboto Condensed")
         .call(makeAnnotation_begur)
 
     // pals
@@ -795,7 +853,9 @@ function drawInitial(){
     svg.append('g')
         .attr('opacity', 0)
         .attr('class', 'annotation_perc')
+        .attr("font-family", "Roboto Condensed")
         .call(makeAnnotation_pals)
+   
 
 }
 
