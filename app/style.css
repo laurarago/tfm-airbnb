@@ -322,6 +322,12 @@ p.subtitle {
     padding-left: 5em;
 
 }
+
+.footer img{
+    mix-blend-mode: multiply;
+    float: center;
+
+}
 .footer p {
     font-family: Bitter;
     font-style: normal;
