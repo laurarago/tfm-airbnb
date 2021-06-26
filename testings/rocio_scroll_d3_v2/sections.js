@@ -221,6 +221,10 @@ function setupGrid(grid_cols, bar_group, bar_label) {
         console.log(bar_start_points)
 }
 
+function make_y_gridlines(scale, ticks) {		
+    return d3.axisLeft(scale)
+        .ticks(ticks)
+}
       
 
 // **************************  END SET UP OTHER VARIABLES **************************//
@@ -907,7 +911,7 @@ function draw05(){
     simulation.alpha(1).restart()
 
     svg.selectAll('circle')
-        .transition().duration(100).ease(d3.easeBack)
+        .transition().duration(100).ease(d3.easeExpInOut)
         .attr('r', 4)
         .attr('fill', d => d.airbnb > 0 ? teal : 'none')
         .attr('stroke', d => d.airbnb > 0 ? 'none' : teal)
@@ -959,7 +963,7 @@ function draw2(){
     svg.selectAll('.annotation_bcn').transition().attr('opacity', 1).delay(800)
     
     svg.selectAll('circle')
-        .transition().duration(800).ease(d3.easeBack)
+        .transition().duration(800).ease(d3.easeExpInOut)
         .attr('cx', d => popScale(d.population))
         .attr('cy', d => airbnbScale(d.airbnb))
         // .attr('r', 4)
@@ -979,7 +983,7 @@ function draw3(){
     svg.selectAll('.annotation_airbnbs').transition().attr('opacity', 1).delay(800)
 
     svg.selectAll('circle')
-        .transition().duration(800).ease(d3.easeBack)
+        .transition().duration(800).ease(d3.easeExpInOut)
         .attr('cx', d => popScale_noBCN(d.population))
         .attr('cy', d => airbnbScale_noBCN(d.airbnb))
         // .attr('r', 4)
@@ -999,11 +1003,12 @@ function draw4(){
     svg.selectAll('.annotation_perc').transition().attr('opacity', 1).delay(800)
 
     svg.selectAll('circle')
-        .transition().duration(800).ease(d3.easeBack)
+        .transition().duration(800).ease(d3.easeExpInOut)
         .attr('cx', d => popScale_noBCN(d.population))
         .attr('cy', d => airbnbPerScale(d.perc_Airbnb))
         // .attr('r', 4)
         .attr('fill', d => d.perc_Airbnb ? teal : 'none')//{if (d.municipality == 'Barcelona' || isNaN(d.perc_Airbnb)){ return 'none'} else { return teal }})
+        .attr('stroke', 'none')
         .attr('opacity', 0.7)
     console.log("draw 4")
 }
@@ -1017,14 +1022,16 @@ function draw5(){
     svg.selectAll('.airbnbPerAxis').transition().attr('opacity', 0.7).selectAll('.domain').attr('opacity', 1)
 
     svg.selectAll('circle')
-        .transition().duration(800).ease(d3.easeBack)
+        .transition().duration(800).ease(d3.easeExpInOut)
         .attr('cx', d => popScale_noBCN(d.population))
         .attr('cy', d => airbnbPerScale(d.perc_Airbnb))
         // .attr('r', 4)
         .attr('fill', d => {
-            if (d.brand == 'Costa Brava'){ return yellow } 
-            if (d.municipality == 'Barcelona' || isNaN(d.perc_Airbnb)){ return 'none' } 
-            else { return teal }})
+            if (d.brand == 'Costa Brava' && d.perc_Airbnb){ return yellow } 
+            if (d.municipality == 'Barcelona'){ return 'none' } 
+            if (d.perc_Airbnb){ return teal }
+            else { return 'none' }})
+        .attr('stroke', 'none')
         .attr('opacity', 0.7)
         console.log("draw 5")
 }
@@ -1034,7 +1041,7 @@ function draw6(){
     clean('isDraw6')
 
     svg.selectAll('circle')
-        .transition().duration(500)
+        .transition().duration(800)
         .attr('fill', 'none')
         .attr('stroke', 'none')
 
