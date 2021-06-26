@@ -2,29 +2,27 @@
 # Catalonia: The land of touristic apartments
 
 ## Introduction
-
 Our goal for this project was to analyze the rise of tourism in Catalonia using Airbnb (or other tourist rental) data. We achieved that goal, though weren’t able to come to the kind of firm conclusions we were hoping to find through our data analysis. Our original intention was to correlate the rise of rent prices with the proliferation of tourist rentals, but our statistical analysis actually showed that though there was a correlation in some places, it wasn’t strong and couldn’t be tied to an increase in rental homes. 
 
 Instead, we decided to focus on the defining characteristic we discovered: that there are really two Catalonias. One is full of tourists — in some places there are more tourist apartments than regular ones — and the other is all locals. 
 
 Our story focuses mainly on the 87.4% of municipalities that have Airbnb listings and the patterns we could find, especially by organizing the municipalities into the nine tourist brands that the Catalan government uses: 
 
-* **Barcelona**,
-* **Costa Daurada**,
-* **Costa Brava**,
-* **Costa Barcelona**,
-* **Val d’Aran**,
-* **Pirineus**,
-* **Terres de Lleida**,
-* **Paisatges de Barcelona**,
-* **Terres de l’Ebre**,
+* **Barcelona**
+* **Costa Daurada**
+* **Costa Brava**
+* **Costa Barcelona**
+* **Val d’Aran**
+* **Pirineus**
+* **Terres de Lleida**
+* **Paisatges de Barcelona**
+* **Terres de l’Ebre**
 
 The final piece tells the story of these two Catalonias, and how tourism impacts them each individually.
 
 
 
 ## Data source & ethical considerations
-
 The data is the basis and the starting point of this work. And the data has been one of the headaches, because they do not exist or because they are incomplete. Airbnb does not facilitate access to its catalog: you have to resort to scraping or, as we have done, to other projects that have opened this data. In our case the main source of information has been DataHippo. And we have focused on the Airbnb offering, as it is the largest shared hosting platform.
 
 We started with the data on tourist apartments offered by the National [Institute of Statistics (INE)](https://ine.es/experimental/viv_turistica/experimental_viv_turistica.htm), but when we found that they were clearly insufficient, we discarded them. This institution only collects the apartments that are officially registered: when comparing them with those of DataHippo, which offers a real photograph of the number of accommodations, we saw that it did not fit.
@@ -37,7 +35,6 @@ Finally, the information from DataHippo, despite being the closest to reality, h
 
 
 ## Data processing & analysis
-
 After cleaning the data to avoid possible duplications (we were left with the geolocated apartments more than 10 meters apart), we chose the variables that we think could be related to the expansion of Airbnb.
 
 There are studies and articles that affirm that the proliferation of tourist apartments promotes gentrification and increases the price of rents in general (in large cities): we analyze the price relationship of rental apartments in Catalonia between 2015 and 2020 (data from the INE ) with the Airbnb number in each of the 947 Catalan municipalities: we do not see a correlation.
@@ -70,18 +67,25 @@ Our main challenge, really, wasn’t implementing the code to create these graph
 
 We ended up finding an R package, [geogrid](https://github.com/jbaileyh/geogrid), which does exactly what we wanted. You feed in geospatial data, run a function (calculate_grid()), and it spits out a map of either squares or hexagons for each of the shapes. What comes out of calculate_grid(), though, is just shapes — no data. To attach the data, you need to run assign_polygons(), and the processing time for that function goes up exponentially with the number of shapes. We originally tried to simply take the gridded map that calculate_grid() gave us and manually assign each municipality to a square. But in the end, the real solution was simply to wait the 24+ hours that it took to run the algorithm. 
 
-For the map path we used the library [Mapbox GlJS](https://www.mapbox.com/mapbox-gljs) to create an scrolly map to get to know better de different places that were struggling with tourism issues. We used the plugin [mini-mapbox](https://github.com/aesqe/mapboxgl-minimap) to create thumbnail on the left bottom corner to show the position in the map. The data file was first processed by QGIS and then exported as a geojson. In order to reduce the size file we used the library [tippecanoe](https://github.com/mapbox/tippecanoe) that converts geojson to a tileset for Mapbox. 
+For the map path we used the library [Mapbox GlJS](https://www.mapbox.com/mapbox-gljs) to create an scrolly map to get to know better the different places that were struggling with tourism issues. We used the plugin [mini-mapbox](https://github.com/aesqe/mapboxgl-minimap) to create thumbnail on the left bottom corner to show the position in the map. The data file was first processed by QGIS and then exported as a geojson. In order to reduce the size file we used the library [tippecanoe](https://github.com/mapbox/tippecanoe) that converts geojson to a tileset for Mapbox. 
+
 
 ## Conclusions
-We haven’t seen any correlation with the most common topics against to Airbnb, maybe because our focus has been all Catalonia, not a big city only: 
-* **Increase of the rental’s price**,
-* **Gentrification**,
+We haven’t seen any correlation between the most common topics (below) and Airbnb trends, maybe because our focus has been all of Catalonia, not just a big city. 
+* **Increase of the rental’s price**
+* **Gentrification**
 
-We haven’t find strong correlations related to:
-* **Population’s income**,
-* **Population’s age**,
+We also did find strong correlations related to:
+* **Income**
+* **Age**
 
-However, there is a clear division among the coast and the interior. And, in the coast towns the listings tend to be close to the beach. Among the municipalities with no Airbnb, the population tends to be aged and 42% has no other tourist accommodation, such as campsite, hotel or rural lodging.
+This means we couldn't draw any conclusions about how trends in Airbnbs or broader trends in tourism have impacted rental prices in Catalonia, nor what factors might influence Airbnb trends.
+
+However, there is a clear division between the coast and the interior part of the country. And, in the coast towns the listings tend to be close to the beach. Among the municipalities with no Airbnb, the population tends to be older, and these areas tend to not have any other tourist accommodations, such as campsite, hotel or rural lodging (42% have no other tourist rentals).
+
+Though it's not entirely novel to say that tourism affects only certain areas, we haven't seen much of any focus on tourism outside of the Barcelona area. Our findings show that there's plenty of tourism in other parts of the country, but that it's not evenly spread — even outside of Barcelona there are areas with tons of tourists and others that get virtually no visitors. Costa Brava, as we highlight in the project, is the main area that attracts tourists. Some municipalities show more Airbnbs than homes. This is definitely an artifact of the data (probably some homes are listed multiple times, or maybe single homes have multiple rooms listed at once, though we tried to control for this), but it may not be far off from reality. Certain areas have more tourist apartments than residential ones. 
+
+These two Catalonias, despite being geographically close, are living worlds apart.
 
 
 ## What's on this folder
@@ -93,5 +97,5 @@ The project The Two Catalonias was designed and developed in the Master’s prog
 
 
 ## Team
-| **Students &rightarrow;**  | [Sara Chodosh](https://twitter.com/schodosh), Ànnia Monreal, [Rocío Márquez](https://twitter.com/arixha) and Laura Aragó|
-| **Mentors &rightarrow;**  | Apple Chan, Carla Garcia and Karma Peiró|
+| **Students &rightarrow;**  | [Sara Chodosh](https://twitter.com/schodosh), Ànnia Monreal, [Rocío Márquez](https://twitter.com/arixha), and Laura Aragó | <br />
+| **Mentors &rightarrow;**  | Apple Chan, Carla Garcia, and Karma Peiró |
