@@ -317,7 +317,7 @@ p.subtitle {
     height: 100vh;
     margin: 0 auto;
     width: 100%;
-    background: #FAFAFA;
+    /* background: #FAFAFA; */
     padding-right: 5em;
     padding-left: 5em;
 
