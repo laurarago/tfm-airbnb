@@ -291,6 +291,7 @@ function drawInitial(){
         .selectAll('circle')
         .data(finalData)
         .join('circle')
+            .attr('opacity', 0)
             .attr('fill', d => d.airbnb > 0 ? teal : 'none')
             .attr('stroke', d => d.airbnb > 0 ? 'none' : teal)
             .attr('r', 4)
@@ -875,6 +876,9 @@ function drawCover(){
 }
 
 function drawIntro(){
+    // svg.selectAll('circle')
+    //     .attr('opacity', 0)
+        
     console.log("drawIntro");
 }
 
@@ -892,6 +896,7 @@ function draw0(){
     svg.selectAll('.annotation_map').transition().attr('opacity', 1)
     
     svg.selectAll('circle')
+        .attr('opacity', 1)
         .transition().duration(500).delay(100)
         .attr('fill', d => d.airbnb > 0 ? teal : 'none')
         .attr('stroke', d => d.airbnb > 0 ? 'none' : teal)
