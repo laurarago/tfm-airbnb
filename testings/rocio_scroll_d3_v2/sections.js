@@ -810,7 +810,13 @@ function drawInitial(){
 
 function clean(chartType){
     let svg = d3.select('#vis').select('svg')
-    if (chartType !== 'isdrawCover') { 
+    if (chartType == 'isdrawCover') { 
+        svg.selectAll('.annotation_map').transition().attr('opacity', 0)
+        svg.selectAll('circle').transition().attr('opacity',0)
+    }
+    if (chartType == 'isdrawIntro') { 
+        svg.selectAll('.annotation_map').transition().attr('opacity', 0)
+        svg.selectAll('circle').transition().attr('opacity',0)
     }
     if (chartType !== 'isDraw0') { 
         svg.selectAll('.annotation_map').transition().attr('opacity', 0)
@@ -873,6 +879,7 @@ function clean(chartType){
 
 function drawCover(){
     console.log("draw Cover")
+    clean('isdrawCover')
 }
 
 function drawIntro(){
@@ -880,6 +887,7 @@ function drawIntro(){
     //     .attr('opacity', 0)
         
     console.log("drawIntro");
+    clean('isdrawIntro')
 }
 
 function draw0(){
