@@ -237,7 +237,7 @@ function setupGrid(grid_cols, bar_group, bar_label) {
 function drawInitial(){
 
     // avoid hand cursor appears
-    document.getElementById("map").style.display = "none";
+    //document.getElementById("map").style.display = "none";
 
     let svg = d3.select("#vis")
                 .append('svg')
@@ -845,11 +845,17 @@ function clean(chartType){
     // if (chartType !== 'isDraw7') {
     //     // no axes needed for the graph, but will need a legend of some kind
     // }
-    if (chartType == "isDraw7"){
+    /*if (chartType == "isMapBox" || chartType == "ex1"){
         document.getElementById("map").style.display = "block";
     }else{
         document.getElementById("map").style.display = "none";
-    }
+    }*/
+
+    /*if (chartType == 'isEx1') {
+        console.log("ex1-opacity")
+        document.getElementById("stepMapBox").style.opacity = 1;
+        document.getElementById("stepEx1").style.opacity = 0;
+    }*/
 
 }
 
@@ -861,7 +867,7 @@ function clean(chartType){
 //First draw function
 
 function drawCover(){
-
+    console.log("draw Cover")
 }
 
 function draw0(){
@@ -886,7 +892,7 @@ function draw0(){
         .attr('cx', d => map_0_xScale(d.mapX))
         .attr('cy', d => map_0_yScale(d.mapY))
 
-    
+    console.log("draw 0")
 }
 
 function draw05(){
@@ -907,7 +913,7 @@ function draw05(){
         .attr('stroke', d => d.airbnb > 0 ? 'none' : teal)
     
     svg.selectAll('.chunkLabels').transition().attr('opacity', 1)
-
+    console.log("draw 05")
 }
 
 function draw1(){
@@ -938,7 +944,7 @@ function draw1(){
         .transition()
         .attr('opacity', 1)
     
-
+   console.log("draw 1")
 }
 
 function draw2(){
@@ -960,7 +966,7 @@ function draw2(){
         .attr('fill', teal)
         .attr('opacity', 0.7)
         
-    
+    console.log("draw 2")
 }
 
 function draw3(){
@@ -979,7 +985,7 @@ function draw3(){
         // .attr('r', 4)
         .attr('fill', d => d.municipality == 'Barcelona' ? 'none' : teal)
         .attr('opacity', 0.7)
-        
+        console.log("draw 3")
 }
 
 function draw4(){
@@ -999,7 +1005,7 @@ function draw4(){
         // .attr('r', 4)
         .attr('fill', d => d.perc_Airbnb ? teal : 'none')//{if (d.municipality == 'Barcelona' || isNaN(d.perc_Airbnb)){ return 'none'} else { return teal }})
         .attr('opacity', 0.7)
-
+    console.log("draw 4")
 }
 
 function draw5(){    
@@ -1020,6 +1026,7 @@ function draw5(){
             if (d.municipality == 'Barcelona' || isNaN(d.perc_Airbnb)){ return 'none' } 
             else { return teal }})
         .attr('opacity', 0.7)
+        console.log("draw 5")
 }
 
 function draw6(){
@@ -1040,17 +1047,56 @@ function draw6(){
     //     .attr('cy', d => map_0_yScale(d.mapY))
     //     .style('mix-blend-mode', 'multiply')
 
-
+    console.log("draw6");
 }
+
 function draw7(){
     clean('isDraw7')
-
+    console.log("draw7");
 }
 
-// function draw8(){
-//     clean('isDraw8')
 
-// }
+function draw8(){
+     clean('isDraw8')
+     console.log("draw8");
+}
+
+function drawMapBox(){
+     clean('isMapBox')
+     console.log("draw9");
+}
+
+function ex1(){
+    console.log("ex1");
+    clean('isEx1')
+}
+function ex2(){
+    console.log("ex2");
+}
+function ex3(){
+    console.log("ex3");
+}
+function ex4(){
+    console.log("ex4");
+}
+function ex5(){
+    console.log("ex5");
+}
+function ex6(){
+    console.log("ex6");
+}
+function ex7(){
+    console.log("ex7");
+}
+function ex8(){
+    console.log("ex8");
+}
+function ex9(){
+    console.log("ex9");
+}
+function drawConclusions(){
+    console.log("drawConclusions");
+}
 
 // ************************** END ALL DRAW FUNCTIONS **************************//
 
@@ -1061,6 +1107,7 @@ function draw7(){
 //Array of all the graph functions
 //Will be called from the scroller functionality
 
+// ex == extra steps to mapbox "substeps"
 let activationFunctions = [
     drawCover,
     draw0,
@@ -1071,7 +1118,19 @@ let activationFunctions = [
     draw4,
     draw5,
     draw6,
-    draw7
+    draw7,
+    draw8,
+    drawMapBox,
+    ex1,
+    ex2,
+    ex3,
+    ex4,
+    ex5,
+    ex6,
+    ex7,
+    ex8,
+    ex9,
+    drawConclusions
 ]
 
 //All the scrolling function
@@ -1086,10 +1145,12 @@ let lastIndex, activeIndex = 0
 
 scroll.on('active', function(index){
 
-    d3.selectAll('.step')
-        .transition().duration(500)
-        .style('opacity', function (d, i) {return i === index ? 1 : 0;});
-    
+    // 12 = ex1, 13 = ex2, 14 = ex3, 15= ex4 ...
+    if(index != 12 && index != 13 && index != 14 && index != 15 && index != 16 && index != 17 && index != 18  && index != 19 && index != 20){
+        d3.selectAll('.step')
+            .transition().duration(500)
+            .style('opacity', function (d, i) {return i === index ? 1 : 0;});
+    }
     activeIndex = index
     let sign = (activeIndex - lastIndex) < 0 ? -1 : 1; 
     let scrolledSections = d3.range(lastIndex + sign, activeIndex + sign, sign);
@@ -1097,6 +1158,7 @@ scroll.on('active', function(index){
         activationFunctions[i]();
     })
     lastIndex = activeIndex;
+
 
 })
 
