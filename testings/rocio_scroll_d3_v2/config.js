@@ -186,7 +186,7 @@ var config = {
     id: 'Barcelona',
     title: 'Barcelona, crowded with touristic aparments',
     image: '',
-    description: `Airbnb has been a source of complaints and legal discussions in Barcelona, where the City Council's attempts to legalize tourist accommodation have not fully borne fruit. The platform is accused of promoting gentrification and raising the price of rents, as well as being a nightmare for some residents. In Barcelona, Airbnb's offer is concentrated in the districts of Ciutat Vella, l’Eixample and Gràcia.`,
+    description: `Airbnb has been a source of complaints and legal discussions in Barcelona, where the City Council's attempts to legalize tourist accommodation have not been fully realized. The platform is accused of promoting gentrification and raising the price of rents, as well as being a nightmare for some residents. In Barcelona, Airbnb apartments are concentrated in the districts of Ciutat Vella, l’Eixample and Gràcia.`,
     location: {
       center: { lon: 2.12195, lat: 41.41609 },
 zoom: 11.06,
@@ -230,7 +230,7 @@ bearing: -14.35
     id: 'Alamús',
     title: 'Els Alamús: the land of no tourism',
     image: '',
-    description: 'With no tourist claims, with less than a thousand inhabitants and 21% of its population over 65, this town in the Segrià region summarizes the main characteristics of Catalonia without visitors.',
+    description: 'With no tourist claims and with less than a thousand inhabitants (and 21% of its population over 65), this town in the Segrià region summarizes the main characteristics of Catalonia without visitors.',
     location: {
       center: { lon: 0.73569, lat: 41.61954 },
 zoom: 12.55,
