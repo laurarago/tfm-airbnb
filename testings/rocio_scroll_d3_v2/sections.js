@@ -874,6 +874,10 @@ function drawCover(){
     console.log("draw Cover")
 }
 
+function drawIntro(){
+    console.log("drawIntro");
+}
+
 function draw0(){
     clean('isDraw0')
     simulation.stop()
@@ -1117,6 +1121,7 @@ function drawConclusions(){
 // ex == extra steps to mapbox "substeps"
 let activationFunctions = [
     drawCover,
+    drawIntro,
     draw0,
     draw05,
     draw1,
@@ -1153,11 +1158,18 @@ let lastIndex, activeIndex = 0
 scroll.on('active', function(index){
 
     // 12 = ex1, 13 = ex2, 14 = ex3, 15= ex4 ...
-    if(index != 12 && index != 13 && index != 14 && index != 15 && index != 16 && index != 17 && index != 18  && index != 19 && index != 20){
+    if(index != 13 && index != 14 && index != 15 && index != 16 && index != 17 && index != 18 && index != 19  && index != 20 && index != 21){
         d3.selectAll('.step')
             .transition().duration(500)
             .style('opacity', function (d, i) {return i === index ? 1 : 0;});
     }
+
+    if(index == 21){
+            d3.selectAll('.step')
+            .transition().duration(500)
+            .style('opacity', 1);
+    }
+
     activeIndex = index
     let sign = (activeIndex - lastIndex) < 0 ? -1 : 1; 
     let scrolledSections = d3.range(lastIndex + sign, activeIndex + sign, sign);
