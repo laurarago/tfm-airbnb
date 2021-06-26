@@ -145,13 +145,17 @@ strong {
 }
 
 .box {
-    background-color: rgba(255, 255, 255, 0.87);
-    padding: 10px;
+    background: #FFFEFE;
+    opacity: 0.85;
     border: 1px solid #C0C0C0;
     box-sizing: border-box;
+    padding: 10px;
     box-shadow: 0px 4px 4px rgba(151, 151, 151, 0.25);
-    width: 50%;
+    width: 40%;
     margin: 0 auto;
+    padding-right: 2em;
+    padding-left: 2em;
+
 }
 
 #tooltip {
@@ -219,6 +223,8 @@ a, a:hover, a:visited {
 .centered {
     width: 50vw;
     margin: 0 auto;
+    padding-right: 2em;
+    padding-left: 2em;
 }
 .lefty {
     width: 33vw;
@@ -230,8 +236,12 @@ a, a:hover, a:visited {
 }
 .light {
     background: #FFFEFE;
+    opacity: 0.85;
     border: 1px solid #C0C0C0;
     box-sizing: border-box;
+    padding: 10px;
+    box-shadow: 0px 4px 4px rgba(151, 151, 151, 0.25);
+
 }
 
 
