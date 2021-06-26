@@ -1121,6 +1121,12 @@ function ex9(){
 function drawConclusions(){
     console.log("drawConclusions");
 }
+function drawMeto(){
+    console.log("drawMeto");
+}
+function drawFooter(){
+    console.log("drawFooter");
+}
 
 // ************************** END ALL DRAW FUNCTIONS **************************//
 
@@ -1155,7 +1161,9 @@ let activationFunctions = [
     ex7,
     ex8,
     ex9,
-    drawConclusions
+    drawConclusions,
+    drawMeto,
+    drawFooter
 ]
 
 //All the scrolling function

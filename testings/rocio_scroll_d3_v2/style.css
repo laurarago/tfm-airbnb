@@ -292,8 +292,8 @@ p {
 }
 
 p.subtitle {
-    font-family: Roboto;
-    font-size: 1.6em;
+    font-family: 'Roboto Condensed';
+    font-size: 1.2em;
     font-weight: bold;
 }
 
@@ -346,13 +346,13 @@ video {
   z-index: 1;
 }
 .overlay {
-  opacity: 0.5;
+  opacity: 0.3;
   width: 100%;
   height: 100vh;
   position: absolute;
   top: 0;
   left: 0;
-  background-image: linear-gradient(45deg, rgba(0,0,0,.2) 20%, rgba(0,0,0,.7) 20%);
+  background-image: linear-gradient(45deg, rgba(255,255,255,.2) 20%, rgba(0,0,0,.1) 30%);
   background-size: 7px 7px;
   z-index: 2;
 }
@@ -390,5 +390,6 @@ video {
 .finaltext {
     width: 50vw;
     margin: 0 auto;
-    font-family: 'Roboto Condensed';
+    font-size: 13px;
+    line-height: 18px !important;
 }
