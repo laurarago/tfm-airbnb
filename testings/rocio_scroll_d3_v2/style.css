@@ -355,3 +355,8 @@ video {
   75%  {top:740px;}
   100% {top:720px;}
 }
+.finaltext {
+    width: 50vw;
+    margin: 0 auto;
+    font-family: 'Roboto Condensed';
+}
