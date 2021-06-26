@@ -22,6 +22,33 @@ body {
     font-family: "Domine";
 }
 
+.intro {
+    background-image: url("Pics/back_amarillo-azul.jpg");
+    width: 100%;
+    height: 100vh;
+    vertical-align: middle;
+    align-items: center;
+    text-align: center;
+    display: flex;
+color: #FFFFFF;
+
+
+
+
+  }
+
+.intro p{
+    font-family: Bitter;
+font-style: normal;
+font-weight: 500;
+font-size: 32px;
+line-height: 58px;
+/* or 181% */
+
+
+
+}
+
 .step {
     height: 100vh;
     font-family: "Domine";
